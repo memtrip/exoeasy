@@ -52,7 +52,7 @@ internal class BroadcastOnPlayerStateChanged(
         }
     }
 
-    override fun onProgress(percentage: Int, currentPosition: Int, duration: Int) {
+    override fun onProgress(percentage: Int, currentPosition: Long, duration: Long) {
         mainThreadHandler.post {
             val intent = notifyIntent()
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.PROGRESS)
@@ -92,8 +92,8 @@ internal class BroadcastOnPlayerStateChanged(
         internal fun broadcastType(intent: Intent): BroadcastType = intent.getSerializableExtra(EXTRA_BROADCAST_TYPE) as BroadcastType
         internal fun url(intent: Intent): String = intent.getStringExtra(EXTRA_BROADCAST_URL)
         internal fun progressPercentage(intent: Intent): Int = intent.getIntExtra(EXTRA_BROADCAST_PROGRESS_PERCENTAGE, 0)
-        internal fun progressPosition(intent: Intent): Int = intent.getIntExtra(EXTRA_BROADCAST_PROGRESS_POSITION, 0)
-        internal fun progressDuration(intent: Intent): Int = intent.getIntExtra(EXTRA_BROADCAST_PROGRESS_DURATION, 0)
+        internal fun progressPosition(intent: Intent): Long = intent.getLongExtra(EXTRA_BROADCAST_PROGRESS_POSITION, 0)
+        internal fun progressDuration(intent: Intent): Long = intent.getLongExtra(EXTRA_BROADCAST_PROGRESS_DURATION, 0)
         internal fun bufferError(intent: Intent): Throwable = intent.getSerializableExtra(EXTRA_BROADCAST_BUFFERING_ERROR_THROWABLE) as Throwable
     }
 }

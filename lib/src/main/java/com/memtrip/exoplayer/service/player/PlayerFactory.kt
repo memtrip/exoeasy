@@ -11,14 +11,10 @@ internal class PlayerFactory(private val context: Context) {
         player: Player?,
         onPlayerStateChanged: OnPlayerStateChanged
     ): Player {
-
-        if (player == null || player.streamUrl != audioResource.url()) {
-            return Player(
-                audioResource.url(),
-                onPlayerStateChanged,
-                context)
+        return if (player == null || player.streamUrl != audioResource.url()) {
+            Player(audioResource.url(), onPlayerStateChanged, context)
         } else {
-            return player
+            player
         }
     }
 }

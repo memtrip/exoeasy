@@ -8,8 +8,8 @@ sealed class AudioState {
     object Completed : AudioState()
     data class Progress(
         val percentage: Int,
-        val currentPosition: Int,
-        val duration: Int
+        val currentPosition: Long,
+        val duration: Long
     ) : AudioState()
     data class BufferingError(
         val throwable: Throwable

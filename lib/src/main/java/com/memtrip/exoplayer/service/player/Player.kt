@@ -7,10 +7,9 @@ import android.os.Looper
 
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
-
-import com.google.android.exoplayer2.SimpleExoPlayer
 
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -27,11 +26,15 @@ internal class Player constructor(
     internal val streamUrl: String,
     onPlayerStateListener: OnPlayerStateChanged,
     context: Context,
-    eventListener: Player.EventListener = PlayerEventListener(onPlayerStateListener),
-    private val player: SimpleExoPlayer = ExoPlayerFactory.newSimpleInstance(
+    private val player: ExoPlayer = ExoPlayerFactory.newSimpleInstance(
         DefaultRenderersFactory(context),
         DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
         DefaultLoadControl()
+    ),
+    progressTick: PlayerProgressTick = PlayerProgressTick(player, onPlayerStateListener),
+    eventListener: PlayerEventListener = PlayerEventListener(
+        onPlayerStateListener,
+        progressTick
     ),
     private val mediaSource: MediaSource = ExtractorMediaSource(
         Uri.parse(streamUrl),
@@ -47,9 +50,12 @@ internal class Player constructor(
     )
 ) {
 
-    var prepared: Boolean = false
+    private var prepared: Boolean = false
 
     init {
+        eventListener.onStop = {
+            prepared = false
+        }
         player.addListener(eventListener)
     }
 

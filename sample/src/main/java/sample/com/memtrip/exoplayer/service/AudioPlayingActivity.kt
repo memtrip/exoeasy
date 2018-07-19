@@ -3,10 +3,12 @@ package sample.com.memtrip.exoplayer.service
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.memtrip.exoplayer.service.AudioState
 import com.memtrip.exoplayer.service.broadcast.AudioStateUpdates
 import com.memtrip.exoplayer.service.player.AudioAction
+import com.memtrip.exoplayer.service.secondsProgressFormat
 import kotlinx.android.synthetic.main.audio_playing_activity.*
 import rx.subjects.PublishSubject
 
@@ -28,12 +30,28 @@ class AudioPlayingActivity: AppCompatActivity() {
             startService(AudioAction.pause(Intent(this, AudioStreamingService::class.java)))
         }
 
+        audio_playing_activity_seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekbar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    seek(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekbar: SeekBar?) { }
+
+            override fun onStopTrackingTouch(seekbar: SeekBar?) { }
+        })
+
         subject.subscribe {
             stateChanges(it)
         }
     }
 
-    fun stateChanges(audioState: AudioState): Unit = when(audioState) {
+    private fun seek(progress: Int) {
+        startService(AudioAction.seek(progress, Intent(this, AudioStreamingService::class.java)))
+    }
+
+    private fun stateChanges(audioState: AudioState): Unit = when(audioState) {
         AudioState.Buffering -> {
 
         }
@@ -49,10 +67,13 @@ class AudioPlayingActivity: AppCompatActivity() {
 
         }
         AudioState.Completed -> {
-
+            audio_playing_activity_play.visibility = View.VISIBLE
+            audio_playing_activity_pause.visibility = View.GONE
         }
         is AudioState.Progress -> {
-
+            audio_playing_activity_seekbar.progress = audioState.percentage
+            audio_playing_activity_duration.text = audioState.duration.secondsProgressFormat()
+            audio_playing_activity_progress.text = audioState.currentPosition.secondsProgressFormat()
         }
         is AudioState.BufferingError -> {
 

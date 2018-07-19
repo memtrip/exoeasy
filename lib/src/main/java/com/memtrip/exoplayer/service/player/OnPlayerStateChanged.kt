@@ -6,6 +6,6 @@ internal interface OnPlayerStateChanged {
     fun onPause()
     fun onStop()
     fun onCompleted()
-    fun onProgress(percentage: Int, currentPosition: Int, duration: Int)
+    fun onProgress(percentage: Int, currentPosition: Long, duration: Long)
     fun onBufferingError(throwable: Throwable)
 }

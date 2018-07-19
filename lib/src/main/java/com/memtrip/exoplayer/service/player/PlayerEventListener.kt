@@ -2,9 +2,14 @@ package com.memtrip.exoplayer.service.player
 
 import com.google.android.exoplayer2.ExoPlaybackException
 
+import com.google.android.exoplayer2.Player as PlayerState
+
 internal class PlayerEventListener constructor(
-    private val onPlayerStateListener: OnPlayerStateChanged
+    private val onPlayerStateListener: OnPlayerStateChanged,
+    private val playerProgressTick: PlayerProgressTick
 ) : PlayerEventListenerAdapter {
+
+    internal lateinit var onStop: () -> Unit
 
     override fun onLoadingChanged(isLoading: Boolean) {
         if (isLoading) {
@@ -13,18 +18,23 @@ internal class PlayerEventListener constructor(
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
+
+        playerProgressTick.stop()
+
+        if (playbackState == PlayerState.STATE_BUFFERING) {
             onPlayerStateListener.onBuffering()
         } else {
-            if (playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
+            if (playbackState == PlayerState.STATE_READY) {
                 if (playWhenReady) {
+                    playerProgressTick.start()
                     onPlayerStateListener.onPlay()
                 } else {
                     onPlayerStateListener.onPause()
                 }
-            } else if (playbackState == com.google.android.exoplayer2.Player.STATE_ENDED) {
+            } else if (playbackState == PlayerState.STATE_ENDED) {
                 onPlayerStateListener.onCompleted()
             } else {
+                onStop()
                 onPlayerStateListener.onStop()
             }
         }
