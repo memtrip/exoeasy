@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="sample.com.memtrip.exoplayer.service">
+    package="com.memtrip.exoeasy.sample">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -14,7 +14,7 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".AudioPlayingActivity"
+            android:name="com.memtrip.exoeasy.sample.AudioPlayingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".AudioStreamingService" />
+        <service android:name="com.memtrip.exoeasy.sample.AudioStreamingService" />
 
     </application>
 

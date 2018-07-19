@@ -6,7 +6,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        applicationId "sample.com.memtrip.exoplayer.service"
+        applicationId "com.memtrip.exoeasy.sample"
         minSdkVersion 14
         targetSdkVersion 28
         versionCode 1
