@@ -11,43 +11,51 @@ import com.memtrip.exoplayer.service.broadcast.BroadcastOnPlayerStateChanged
 
 abstract class StreamingService<T : AudioResource> : Service() {
 
+    private lateinit var playerFactory: PlayerFactory
+    private lateinit var becomingNoisyInterrupt: InterruptBecomingNoisy
+    private lateinit var audioFocusInterrupt: InterruptAudioFocus
+
     private var player: Player? = null
-    private var becomingNoisyInterrupt: InterruptBecomingNoisy? = null
-    private var audioFocusInterrupt: InterruptAudioFocus? = null
 
     protected abstract fun audioResourceIntent(): AudioResourceIntent<T>
 
+    override fun onCreate() {
+        super.onCreate()
+
+        playerFactory = PlayerFactory(this)
+
+        becomingNoisyInterrupt = InterruptBecomingNoisy({
+            let { player }?.pause()
+        }, application).register()
+
+        audioFocusInterrupt = InterruptAudioFocus({
+            let { player }?.pause()
+        }, application).register()
+    }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-
-        val stream = audioResourceIntent().get(intent)
-
-        start(stream)
-
+        onIntentReceived(intent)
         return Service.START_NOT_STICKY
     }
 
-    private fun start(audioResource: T) {
+    private fun onIntentReceived(intent: Intent) {
 
-        player = Player(
-                audioResource.url(),
+        val audioResource = audioResourceIntent().get(intent)
+
+        player = playerFactory.get(
+                audioResource,
+                player,
                 BroadcastOnPlayerStateChanged(
-                        audioResource.url(),
-                        LocalBroadcastManager.getInstance(this),
-                        Handler(Looper.getMainLooper())),
-                this)
+                audioResource.url(),
+                LocalBroadcastManager.getInstance(this),
+                Handler(Looper.getMainLooper())))
 
-        becomingNoisyInterrupt = InterruptBecomingNoisy({ player!!.pause() }, application)
-        becomingNoisyInterrupt!!.register()
-
-        audioFocusInterrupt = InterruptAudioFocus({ player!!.pause() }, application)
-        audioFocusInterrupt!!.register()
-
-        player!!.prepare()
+        AudioAction.perform(player!!, intent)
     }
 
     private fun release() {
-        let { becomingNoisyInterrupt }?.unregister()
-        let { audioFocusInterrupt }?.unregister()
+        becomingNoisyInterrupt.unregister()
+        audioFocusInterrupt.unregister()
         let { player }?.release()
     }
 

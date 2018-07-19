@@ -6,9 +6,16 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/audio_playing_activity_toggle"
+        android:id="@+id/audio_playing_activity_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="play"/>
+
+    <Button
+        android:id="@+id/audio_playing_activity_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="pause"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

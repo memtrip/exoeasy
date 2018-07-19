@@ -10,10 +10,11 @@ internal class InterruptAudioFocus constructor(
     private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 ) : AudioManager.OnAudioFocusChangeListener {
 
-    fun register() {
+    fun register(): InterruptAudioFocus {
         audioManager.requestAudioFocus(this,
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN)
+        return this
     }
 
     fun unregister() {

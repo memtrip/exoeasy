@@ -24,7 +24,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.memtrip.exoplayer.service.BuildConfig
 
 internal class Player constructor(
-    streamUrl: String,
+    internal val streamUrl: String,
     onPlayerStateListener: OnPlayerStateChanged,
     context: Context,
     eventListener: Player.EventListener = PlayerEventListener(onPlayerStateListener),
@@ -47,21 +47,32 @@ internal class Player constructor(
     )
 ) {
 
+    var prepared: Boolean = false
+
     init {
         player.addListener(eventListener)
     }
 
-    internal fun prepare() {
-        player.prepare(mediaSource)
+    internal fun play() {
+        if (!prepared) {
+            player.prepare(mediaSource)
+            prepared = true
+        }
+
         player.playWhenReady = true
+    }
+
+    internal fun pause() {
+        player.playWhenReady = false
+    }
+
+    internal fun seek(progress: Int) {
+        val seekPosition = progress * player.duration / 100
+        player.seekTo(seekPosition)
     }
 
     internal fun release() {
         player.stop()
         player.release()
-    }
-
-    internal fun pause() {
-        player.playWhenReady = false
     }
 }

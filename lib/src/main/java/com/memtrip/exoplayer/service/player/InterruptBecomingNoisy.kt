@@ -12,8 +12,9 @@ internal class InterruptBecomingNoisy constructor(
     private val intentFilter: IntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
 ) : BroadcastReceiver() {
 
-    fun register() {
+    fun register(): InterruptBecomingNoisy {
         context.registerReceiver(this, intentFilter)
+        return this
     }
 
     fun unregister() {
