@@ -36,14 +36,13 @@ internal class Player constructor(
                 progressTick
         ),
         private val mediaSource: MediaSource = ExtractorMediaSource(
-        Uri.parse(streamUrl),
-        DefaultHttpDataSourceFactory(userAgent, null),
-        DefaultExtractorsFactory(),
-        Handler(Looper.getMainLooper()),
-        ExtractorMediaSource.EventListener {
-            onPlayerStateListener.onBufferingError(it)
-        }
-    )
+            Uri.parse(streamUrl),
+            DefaultHttpDataSourceFactory(userAgent, null),
+            DefaultExtractorsFactory(),
+            Handler(Looper.getMainLooper()),
+            ExtractorMediaSource.EventListener {
+                onPlayerStateListener.onBufferingError(it)
+            })
 ) {
 
     private var prepared: Boolean = false
