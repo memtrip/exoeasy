@@ -2,7 +2,7 @@ package com.memtrip.exoeasy.player
 
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
-import junit.framework.Assert.assertTrue
+import junit.framework.TestCase.assertTrue
 
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -61,7 +61,7 @@ class PlayerEventListenerTest : Spek({
             playerEventListener.onStop = {
                 onStopCalled = true
             }
-            
+
             playerEventListener.onPlayerStateChanged(false, PlayerState.STATE_IDLE)
 
             it("should stop ticker, notify `stop` and trigger onStop callback") {

@@ -5,9 +5,9 @@ import android.content.Context
 
 @Suppress("DEPRECATION")
 internal class InterruptAudioFocus constructor(
-        private val interruptAudio: InterruptAudio,
-        context: Context,
-        private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private val interruptAudio: InterruptAudio,
+    context: Context,
+    private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 ) : AudioManager.OnAudioFocusChangeListener {
 
     fun register(): InterruptAudioFocus {

@@ -7,9 +7,9 @@ import android.media.AudioManager
 import android.content.IntentFilter
 
 internal class InterruptBecomingNoisy constructor(
-        private val interruptAudio: InterruptAudio,
-        private val context: Context,
-        private val intentFilter: IntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+    private val interruptAudio: InterruptAudio,
+    private val context: Context,
+    private val intentFilter: IntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
 ) : BroadcastReceiver() {
 
     fun register(): InterruptBecomingNoisy {

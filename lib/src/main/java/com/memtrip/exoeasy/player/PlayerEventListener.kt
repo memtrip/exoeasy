@@ -5,8 +5,8 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player as PlayerState
 
 internal class PlayerEventListener constructor(
-        private val onPlayerStateListener: OnPlayerStateChanged,
-        private val playerProgressTick: PlayerProgressTick
+    private val onPlayerStateListener: OnPlayerStateChanged,
+    private val playerProgressTick: PlayerProgressTick
 ) : PlayerEventListenerAdapter {
 
     internal lateinit var onStop: () -> Unit
@@ -32,6 +32,7 @@ internal class PlayerEventListener constructor(
                     onPlayerStateListener.onPause()
                 }
             } else if (playbackState == PlayerState.STATE_ENDED) {
+                onStop()
                 onPlayerStateListener.onCompleted()
             } else {
                 onStop()

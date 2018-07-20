@@ -4,9 +4,9 @@ import android.os.Handler
 import com.google.android.exoplayer2.ExoPlayer
 
 internal class PlayerProgressTick(
-        private val player: ExoPlayer,
-        private val onPlayerStateChanged: OnPlayerStateChanged,
-        private val handler: Handler = Handler()
+    private val player: ExoPlayer,
+    private val onPlayerStateChanged: OnPlayerStateChanged,
+    private val handler: Handler = Handler()
 ) {
 
     private var inProgress: Boolean = false

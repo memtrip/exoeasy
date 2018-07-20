@@ -21,28 +21,28 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 
 internal class Player constructor(
-        internal val streamUrl: String,
-        private val userAgent: String,
-        onPlayerStateListener: OnPlayerStateChanged,
-        context: Context,
-        private val player: ExoPlayer = ExoPlayerFactory.newSimpleInstance(
-        DefaultRenderersFactory(context),
-        DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
-        DefaultLoadControl()
+    internal val streamUrl: String,
+    private val userAgent: String,
+    onPlayerStateListener: OnPlayerStateChanged,
+    context: Context,
+    private val player: ExoPlayer = ExoPlayerFactory.newSimpleInstance(
+    DefaultRenderersFactory(context),
+    DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
+    DefaultLoadControl()
+),
+    progressTick: PlayerProgressTick = PlayerProgressTick(player, onPlayerStateListener),
+    eventListener: PlayerEventListener = PlayerEventListener(
+            onPlayerStateListener,
+            progressTick
     ),
-        progressTick: PlayerProgressTick = PlayerProgressTick(player, onPlayerStateListener),
-        eventListener: PlayerEventListener = PlayerEventListener(
-                onPlayerStateListener,
-                progressTick
-        ),
-        private val mediaSource: MediaSource = ExtractorMediaSource(
-            Uri.parse(streamUrl),
-            DefaultHttpDataSourceFactory(userAgent, null),
-            DefaultExtractorsFactory(),
-            Handler(Looper.getMainLooper()),
-            ExtractorMediaSource.EventListener {
-                onPlayerStateListener.onBufferingError(it)
-            })
+    private val mediaSource: MediaSource = ExtractorMediaSource(
+        Uri.parse(streamUrl),
+        DefaultHttpDataSourceFactory(userAgent, null),
+        DefaultExtractorsFactory(),
+        Handler(Looper.getMainLooper()),
+        ExtractorMediaSource.EventListener {
+            onPlayerStateListener.onBufferingError(it)
+        })
 ) {
 
     private var prepared: Boolean = false
