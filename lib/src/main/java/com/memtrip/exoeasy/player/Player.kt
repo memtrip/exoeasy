@@ -21,23 +21,27 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 
 internal class Player constructor(
-    internal val streamUrl: String,
-    private val userAgent: String,
+    internal val config: PlayerConfig,
     onPlayerStateListener: OnPlayerStateChanged,
     context: Context,
-    private val player: ExoPlayer = ExoPlayerFactory.newSimpleInstance(
-    DefaultRenderersFactory(context),
-    DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
-    DefaultLoadControl()
-),
-    progressTick: PlayerProgressTick = PlayerProgressTick(player, onPlayerStateListener),
+    private val exoPlayer: ExoPlayer = ExoPlayerFactory.newSimpleInstance(
+        DefaultRenderersFactory(context),
+        DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
+        DefaultLoadControl()),
+    private val progressTracker: PlayerProgressTracker = PlayerProgressTracker(
+        config.trackProgress,
+        config.streamUrl,
+        context),
+    progressTick: PlayerProgressTick = PlayerProgressTick(
+        exoPlayer,
+        progressTracker,
+        onPlayerStateListener),
     eventListener: PlayerEventListener = PlayerEventListener(
-            onPlayerStateListener,
-            progressTick
-    ),
+        onPlayerStateListener,
+        progressTick),
     private val mediaSource: MediaSource = ExtractorMediaSource(
-        Uri.parse(streamUrl),
-        DefaultHttpDataSourceFactory(userAgent, null),
+        Uri.parse(config.streamUrl),
+        DefaultHttpDataSourceFactory(config.userAgent, null),
         DefaultExtractorsFactory(),
         Handler(Looper.getMainLooper()),
         ExtractorMediaSource.EventListener {
@@ -49,31 +53,38 @@ internal class Player constructor(
 
     init {
         eventListener.onStop = {
+            progressTracker.clear()
             prepared = false
         }
-        player.addListener(eventListener)
+
+        exoPlayer.addListener(eventListener)
     }
 
     internal fun play() {
         if (!prepared) {
-            player.prepare(mediaSource)
+            exoPlayer.prepare(mediaSource)
             prepared = true
+
+            val duration = progressTracker.currentProgress(config.streamUrl)
+            if (duration > 0) {
+                exoPlayer.seekTo(progressTracker.currentProgress(config.streamUrl))
+            }
         }
 
-        player.playWhenReady = true
+        exoPlayer.playWhenReady = true
     }
 
     internal fun pause() {
-        player.playWhenReady = false
+        exoPlayer.playWhenReady = false
     }
 
-    internal fun seek(progress: Int) {
-        val seekPosition = progress * player.duration / 100
-        player.seekTo(seekPosition)
+    internal fun seek(percentage: Int) {
+        val seekPosition = percentage * exoPlayer.duration / 100
+        exoPlayer.seekTo(seekPosition)
     }
 
     internal fun release() {
-        player.stop()
-        player.release()
+        exoPlayer.stop()
+        exoPlayer.release()
     }
 }

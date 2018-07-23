@@ -123,11 +123,11 @@ class AudioStateBroadcastReceiverTest : Spek({
                 }.thenReturn(10)
 
                 on {
-                    getIntExtra("EXTRA_BROADCAST_PROGRESS_POSITION", 0)
+                    getLongExtra("EXTRA_BROADCAST_PROGRESS_POSITION", 0)
                 }.thenReturn(50)
 
                 on {
-                    getIntExtra("EXTRA_BROADCAST_PROGRESS_DURATION", 0)
+                    getLongExtra("EXTRA_BROADCAST_PROGRESS_DURATION", 0)
                 }.thenReturn(100)
             }
 

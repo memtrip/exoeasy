@@ -5,6 +5,7 @@ import com.google.android.exoplayer2.ExoPlayer
 
 internal class PlayerProgressTick(
     private val player: ExoPlayer,
+    private val progressTracker: PlayerProgressTracker,
     private val onPlayerStateChanged: OnPlayerStateChanged,
     private val handler: Handler = Handler()
 ) {
@@ -23,6 +24,7 @@ internal class PlayerProgressTick(
     private fun tick() {
         if (inProgress) {
             report()
+            progressTracker.track(player.currentPosition)
             handler.postDelayed({
                 tick()
             }, FRAME_RATE)

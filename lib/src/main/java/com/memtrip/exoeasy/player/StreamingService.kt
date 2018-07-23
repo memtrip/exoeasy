@@ -43,12 +43,12 @@ abstract class StreamingService<T : AudioResource> : Service() {
         val audioResource = audioResourceIntent().get(intent)
 
         player = playerFactory.get(
-                audioResource,
-                player,
-                BroadcastOnPlayerStateChanged(
-                        audioResource.url(),
-                        LocalBroadcastManager.getInstance(this),
-                        Handler(Looper.getMainLooper())))
+            audioResource,
+            player,
+            BroadcastOnPlayerStateChanged(
+                audioResource.url(),
+                LocalBroadcastManager.getInstance(this),
+                Handler(Looper.getMainLooper())))
 
         AudioAction.perform(player!!, intent)
     }
