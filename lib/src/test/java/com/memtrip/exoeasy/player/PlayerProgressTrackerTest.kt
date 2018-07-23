@@ -33,7 +33,7 @@ class PlayerProgressTrackerTest : Spek({
             PlayerProgressTracker(false, "ipfs://file", mock(), sharedPreferences)
         }
 
-        on("tracking between 1000 and 9000 progress") {
+        on("tracking between 1000 and 9000 position") {
 
             whenever(editor.putLong("PROGRESS_TRACKER_DURATION", 9000)).thenReturn(editor)
             whenever(editor.putString("PROGRESS_TRACKER_URL", "ipfs://file")).thenReturn(editor)
@@ -64,7 +64,7 @@ class PlayerProgressTrackerTest : Spek({
             PlayerProgressTracker(true, "ipfs://file", mock(), sharedPreferences)
         }
 
-        on("tracking initial progress") {
+        on("tracking initial position") {
 
             playerProgressTracker.track(1000)
 
@@ -74,7 +74,7 @@ class PlayerProgressTrackerTest : Spek({
             }
         }
 
-        on("tracking between 1000 and 3000 progress") {
+        on("tracking between 1000 and 3000 position") {
 
             playerProgressTracker.track(1000)
             playerProgressTracker.track(3000)
@@ -85,7 +85,7 @@ class PlayerProgressTrackerTest : Spek({
             }
         }
 
-        on("tracking between 1000 and 9000 progress") {
+        on("tracking between 1000 and 9000 position") {
 
             whenever(editor.putLong("PROGRESS_TRACKER_DURATION", 9000)).thenReturn(editor)
             whenever(editor.putString("PROGRESS_TRACKER_URL", "ipfs://file")).thenReturn(editor)
@@ -99,7 +99,7 @@ class PlayerProgressTrackerTest : Spek({
             }
         }
 
-        on("tracking between 9000 and 1000 progress") {
+        on("tracking between 9000 and 1000 position") {
 
             whenever(editor.putLong("PROGRESS_TRACKER_DURATION", 9000)).thenReturn(editor)
             whenever(editor.putString("PROGRESS_TRACKER_URL", "ipfs://file")).thenReturn(editor)

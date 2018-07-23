@@ -11,13 +11,14 @@ class PlayerProgressTracker(
     private val sharedPreferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 ) {
 
-    private var previousLoggedDuration: Long = -1L
+    private var previousPosition: Long = -1L
 
-    fun track(duration: Long) {
+    fun track(currentPosition: Long) {
         if (trackProgress) {
-            if (Math.abs(duration - previousLoggedDuration) > 8000 || previousLoggedDuration == -1L) {
-                previousLoggedDuration = duration
-                sharedPreferences.edit().putLong(PROGRESS_TRACKER_DURATION, duration).apply()
+
+            if (Math.abs(currentPosition - previousPosition) > 8000) {
+                previousPosition = currentPosition
+                sharedPreferences.edit().putLong(PROGRESS_TRACKER_DURATION, currentPosition).apply()
                 sharedPreferences.edit().putString(PROGRESS_TRACKER_URL, url).apply()
             }
         }
