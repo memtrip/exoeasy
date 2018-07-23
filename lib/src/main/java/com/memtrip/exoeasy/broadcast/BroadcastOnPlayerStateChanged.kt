@@ -75,7 +75,7 @@ internal class BroadcastOnPlayerStateChanged(
     private fun notifyIntent(): Intent {
         val intent = Intent()
         intent.action = ACTION_STREAM_NOTIFY
-        intent.putExtra(EXTRA_BROADCAST_URL, url)
+        intent.type = url
         return intent
     }
 
@@ -83,14 +83,12 @@ internal class BroadcastOnPlayerStateChanged(
 
         internal const val ACTION_STREAM_NOTIFY = "ACTION_STREAM_NOTIFY"
         private const val EXTRA_BROADCAST_TYPE = "EXTRA_BROADCAST_TYPE"
-        private const val EXTRA_BROADCAST_URL = "EXTRA_BROADCAST_URL"
         private const val EXTRA_BROADCAST_PROGRESS_PERCENTAGE = "EXTRA_BROADCAST_PROGRESS_PERCENTAGE"
         private const val EXTRA_BROADCAST_PROGRESS_POSITION = "EXTRA_BROADCAST_PROGRESS_POSITION"
         private const val EXTRA_BROADCAST_PROGRESS_DURATION = "EXTRA_BROADCAST_PROGRESS_DURATION"
         private const val EXTRA_BROADCAST_BUFFERING_ERROR_THROWABLE = "EXTRA_BROADCAST_BUFFERING_ERROR_THROWABLE"
 
         internal fun broadcastType(intent: Intent): BroadcastType = intent.getSerializableExtra(EXTRA_BROADCAST_TYPE) as BroadcastType
-        internal fun url(intent: Intent): String = intent.getStringExtra(EXTRA_BROADCAST_URL)
         internal fun progressPercentage(intent: Intent): Int = intent.getIntExtra(EXTRA_BROADCAST_PROGRESS_PERCENTAGE, 0)
         internal fun progressPosition(intent: Intent): Long = intent.getLongExtra(EXTRA_BROADCAST_PROGRESS_POSITION, 0)
         internal fun progressDuration(intent: Intent): Long = intent.getLongExtra(EXTRA_BROADCAST_PROGRESS_DURATION, 0)

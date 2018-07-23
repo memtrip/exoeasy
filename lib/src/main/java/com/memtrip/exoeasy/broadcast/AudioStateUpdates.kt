@@ -9,10 +9,10 @@ class AudioStateUpdates(publishSubject: PublishSubject<AudioState>) {
 
     private val broadcastReceiver: AudioStateBroadcastReceiver = AudioStateBroadcastReceiver(publishSubject)
 
-    fun register(context: Context) {
+    fun register(context: Context, url: String) {
         LocalBroadcastManager
                 .getInstance(context)
-                .registerReceiver(broadcastReceiver, AudioStateBroadcastReceiver.intentFilter)
+                .registerReceiver(broadcastReceiver, AudioStateBroadcastReceiver.intentFilter(url))
     }
 
     fun unregister(context: Context) {

@@ -60,13 +60,13 @@ abstract class StreamingService<T : AudioResource> : Service() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         release()
+        super.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent) {
-        release()
         stopSelf()
+        super.onTaskRemoved(rootIntent)
     }
 
     override fun onBind(intent: Intent) = null

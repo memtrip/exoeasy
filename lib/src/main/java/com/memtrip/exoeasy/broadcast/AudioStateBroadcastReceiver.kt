@@ -34,6 +34,8 @@ internal class AudioStateBroadcastReceiver(
     }
 
     companion object {
-        internal val intentFilter = IntentFilter(BroadcastOnPlayerStateChanged.ACTION_STREAM_NOTIFY)
+        internal fun intentFilter(url: String): IntentFilter {
+            return IntentFilter(BroadcastOnPlayerStateChanged.ACTION_STREAM_NOTIFY, url)
+        }
     }
 }

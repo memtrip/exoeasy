@@ -82,7 +82,7 @@ class AudioPlayingActivity: AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        audioStateUpdates.register(this)
+        audioStateUpdates.register(this, RadioAudioResource().url())
     }
 
     override fun onStop() {
