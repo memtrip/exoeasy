@@ -83,6 +83,11 @@ internal class Player constructor(
         exoPlayer.seekTo(seekPosition)
     }
 
+    internal fun stop() {
+        exoPlayer.stop()
+        prepared = false
+    }
+
     internal fun release() {
         exoPlayer.stop()
         exoPlayer.release()

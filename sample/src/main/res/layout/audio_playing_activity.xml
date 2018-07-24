@@ -27,19 +27,31 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="57dp" />
 
-    <Button
-        android:id="@+id/audio_playing_activity_play"
+    <ProgressBar
+        android:id="@+id/audio_playing_activity_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/audio_playing_activity_play_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="play"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
     <Button
-        android:id="@+id/audio_playing_activity_pause"
+        android:id="@+id/audio_playing_activity_pause_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
         android:text="pause"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -47,31 +59,44 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
-        android:id="@+id/audio_playing_activity_progress"
+        android:id="@+id/audio_playing_activity_progress_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="end"
+        android:text="00:00"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/audio_playing_activity_button_guide_start"
-        app:layout_constraintRight_toRightOf="@+id/audio_playing_activity_label_guide_start"
-        android:text="00:00"/>
+        app:layout_constraintRight_toRightOf="@+id/audio_playing_activity_label_guide_start" />
 
     <SeekBar
         android:id="@+id/audio_playing_activity_seekbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="@+id/audio_playing_activity_label_guide_start"
         app:layout_constraintTop_toBottomOf="@+id/audio_playing_activity_button_guide_start"
         app:layout_constraintRight_toRightOf="@+id/audio_playing_activity_label_guide_end"/>
 
     <TextView
-        android:id="@+id/audio_playing_activity_duration"
+        android:id="@+id/audio_playing_activity_duration_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="start"
+        android:text="00:00"
         app:layout_constraintLeft_toLeftOf="@+id/audio_playing_activity_label_guide_end"
         app:layout_constraintTop_toBottomOf="@+id/audio_playing_activity_button_guide_start"
-        app:layout_constraintRight_toRightOf="parent"
-        android:text="00:00"/>
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/audio_playing_activity_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Stop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/audio_playing_activity_seekbar"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

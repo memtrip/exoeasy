@@ -15,7 +15,7 @@ enum class AudioAction {
         internal fun perform(player: Player, intent: Intent): Unit = when (audioAction(intent)) {
             PLAY -> player.play()
             PAUSE -> player.pause()
-            STOP -> player.release()
+            STOP -> player.stop()
             SEEK -> player.seek(audioSeekPercentage(intent))
         }
 
