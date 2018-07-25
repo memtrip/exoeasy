@@ -59,7 +59,7 @@ class AudioActionTest : Spek({
             AudioAction.perform(player, intent)
 
             it("should trigger `stop` on player") {
-                verify(player).release()
+                verify(player).stop()
             }
         }
 

@@ -12,11 +12,13 @@ enum class AudioAction {
         private const val EXTRA_AUDIO_ACTION_TYPE = "EXTRA_AUDIO_ACTION_TYPE"
         private const val EXTRA_AUDIO_SEEK_PERCENTAGE = "EXTRA_AUDIO_SEEK_PERCENTAGE"
 
-        internal fun perform(player: Player, intent: Intent): Unit = when (audioAction(intent)) {
-            PLAY -> player.play()
-            PAUSE -> player.pause()
-            STOP -> player.stop()
-            SEEK -> player.seek(audioSeekPercentage(intent))
+        internal fun perform(player: Player, intent: Intent) {
+            return when (audioAction(intent)) {
+                PLAY -> player.play()
+                PAUSE -> player.pause()
+                STOP -> player.stop()
+                SEEK -> player.seek(audioSeekPercentage(intent))
+            }
         }
 
         private fun audioAction(intent: Intent): AudioAction {

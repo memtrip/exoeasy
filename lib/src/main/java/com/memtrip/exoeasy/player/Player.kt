@@ -5,32 +5,31 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
 
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.memtrip.exoeasy.AudioResource
 
 internal class Player constructor(
-    internal val config: PlayerConfig,
+    internal val audioResource: AudioResource,
     onPlayerStateListener: OnPlayerStateChanged,
     context: Context,
-    private val exoPlayer: ExoPlayer = ExoPlayerFactory.newSimpleInstance(
-        DefaultRenderersFactory(context),
-        DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
-        DefaultLoadControl()),
+    private val exoPlayer: ExoPlayer,
+    private val mediaSource: MediaSource = ExtractorMediaSource(
+        Uri.parse(audioResource.url),
+        DefaultHttpDataSourceFactory(audioResource.userAgent, null),
+        DefaultExtractorsFactory(),
+        Handler(Looper.getMainLooper()),
+        ExtractorMediaSource.EventListener {
+            onPlayerStateListener.onBufferingError(it)
+        }),
     private val progressTracker: PlayerProgressTracker = PlayerProgressTracker(
-        config.trackProgress,
-        config.streamUrl,
+        audioResource.trackProgress,
+        audioResource.url,
         context),
     progressTick: PlayerProgressTick = PlayerProgressTick(
         exoPlayer,
@@ -38,15 +37,7 @@ internal class Player constructor(
         onPlayerStateListener),
     eventListener: PlayerEventListener = PlayerEventListener(
         onPlayerStateListener,
-        progressTick),
-    private val mediaSource: MediaSource = ExtractorMediaSource(
-        Uri.parse(config.streamUrl),
-        DefaultHttpDataSourceFactory(config.userAgent, null),
-        DefaultExtractorsFactory(),
-        Handler(Looper.getMainLooper()),
-        ExtractorMediaSource.EventListener {
-            onPlayerStateListener.onBufferingError(it)
-        })
+        progressTick)
 ) {
 
     private var prepared: Boolean = false
@@ -65,9 +56,9 @@ internal class Player constructor(
             exoPlayer.prepare(mediaSource)
             prepared = true
 
-            val duration = progressTracker.currentProgress(config.streamUrl)
+            val duration = progressTracker.currentProgress(audioResource.url)
             if (duration > 0) {
-                exoPlayer.seekTo(progressTracker.currentProgress(config.streamUrl))
+                exoPlayer.seekTo(progressTracker.currentProgress(audioResource.url))
             }
         }
 

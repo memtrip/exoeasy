@@ -3,6 +3,7 @@ package com.memtrip.exoeasy.player
 import android.content.Context
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
+import com.memtrip.exoeasy.AudioResource
 
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
@@ -23,7 +24,7 @@ class PlayerTest : Spek({
 
     given("a Player") {
 
-        val config by memoized { mock<PlayerConfig>() }
+        val audioResource by memoized { mock<AudioResource>() }
         val onPlayerStateListener by memoized { mock<OnPlayerStateChanged>() }
         val context by memoized { mock<Context>() }
         val exoPlayer by memoized { mock<ExoPlayer>() }
@@ -35,14 +36,14 @@ class PlayerTest : Spek({
         val player by memoized {
 
             Player(
-                config,
+                audioResource,
                 onPlayerStateListener,
                 context,
                 exoPlayer,
+                mediaSource,
                 progressTracker,
                 progressTick,
-                playerEventListener,
-                mediaSource)
+                playerEventListener)
         }
 
         on("`play` on player before preparation has completed, without a tracked progress") {
@@ -58,7 +59,7 @@ class PlayerTest : Spek({
 
         on("`play` on player before preparation has completed, with a tracked progress") {
 
-            whenever(config.streamUrl).thenReturn("ipfs://file")
+            whenever(audioResource.url).thenReturn("ipfs://file")
             whenever(progressTracker.currentProgress("ipfs://file")).thenReturn(1000)
 
             player.play()

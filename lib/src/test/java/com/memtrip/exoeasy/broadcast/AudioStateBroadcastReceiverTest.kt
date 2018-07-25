@@ -3,7 +3,6 @@ package com.memtrip.exoeasy.broadcast
 import android.content.Context
 import android.content.Intent
 import com.google.android.exoplayer2.ExoPlaybackException
-import com.memtrip.exoeasy.AudioState
 
 import com.nhaarman.mockito_kotlin.mock
 import org.jetbrains.spek.api.Spek

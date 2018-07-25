@@ -1,7 +1,7 @@
 package com.memtrip.exoeasy
 
 interface AudioResource {
-    fun url(): String
-    fun userAgent(): String
-    fun trackProgress(): Boolean
+    val url: String
+    val userAgent: String
+    val trackProgress: Boolean
 }

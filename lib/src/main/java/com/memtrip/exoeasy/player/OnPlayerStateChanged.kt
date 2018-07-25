@@ -1,6 +1,6 @@
 package com.memtrip.exoeasy.player
 
-internal interface OnPlayerStateChanged {
+interface OnPlayerStateChanged {
     fun onBuffering()
     fun onPlay()
     fun onPause()

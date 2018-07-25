@@ -1,23 +1,73 @@
 package com.memtrip.exoeasy.player
 
+import android.app.Activity
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.memtrip.exoeasy.AudioResource
 import com.memtrip.exoeasy.AudioResourceIntent
+import com.memtrip.exoeasy.NotificationInfo
 import com.memtrip.exoeasy.broadcast.BroadcastOnPlayerStateChanged
+import com.memtrip.exoeasy.notification.Destination
+import com.memtrip.exoeasy.notification.NotificationConfig
 
-abstract class StreamingService<T : AudioResource> : Service() {
+import com.memtrip.exoeasy.notification.StreamingNotificationFactory
+import com.memtrip.exoeasy.notification.AudioStateRemoteView
+import kotlin.reflect.KClass
 
-    private lateinit var playerFactory: PlayerFactory
+abstract class StreamingService<A : AudioResource> : Service() {
+
+    private lateinit var playerFactory: PlayerFactory<A>
     private lateinit var becomingNoisyInterrupt: InterruptBecomingNoisy
     private lateinit var audioFocusInterrupt: InterruptAudioFocus
 
     private var player: Player? = null
 
-    protected abstract fun audioResourceIntent(): AudioResourceIntent<T>
+    protected abstract fun audioResourceIntent(): AudioResourceIntent<A>
+
+    protected abstract fun notificationConfig(): NotificationConfig
+
+    protected abstract fun audioStateRemoteView(
+        destination: Destination<A>
+    ): AudioStateRemoteView<A>
+
+    protected abstract fun activityDestination(): KClass<out Activity>
+
+    protected open fun exoPlayer(): ExoPlayer {
+        return ExoPlayerFactory.newSimpleInstance(
+            DefaultRenderersFactory(this),
+            DefaultTrackSelector(AdaptiveTrackSelection.Factory(DefaultBandwidthMeter())),
+            DefaultLoadControl())
+    }
+
+    protected open fun mediaSource(
+        url: String,
+        userAgent: String,
+        onPlayerStateChanged: OnPlayerStateChanged
+    ): MediaSource {
+        return ExtractorMediaSource(
+            Uri.parse(url),
+            DefaultHttpDataSourceFactory(userAgent, null),
+            DefaultExtractorsFactory(),
+            Handler(Looper.getMainLooper()),
+            ExtractorMediaSource.EventListener {
+                onPlayerStateChanged.onBufferingError(it)
+            })
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -40,28 +90,56 @@ abstract class StreamingService<T : AudioResource> : Service() {
 
     private fun onIntentReceived(intent: Intent) {
 
+        val notificationInfo = audioResourceIntent().notificationInfo(intent)
+
         val audioResource = audioResourceIntent().get(intent)
+
+        val onPlayerStateChanged = BroadcastOnPlayerStateChanged(
+            audioResource.url,
+            StreamingNotificationFactory(
+                notificationConfig(),
+                audioStateRemoteView(destination(
+                    audioResource,
+                    audioResourceIntent(),
+                    notificationInfo
+                )), this),
+            LocalBroadcastManager.getInstance(this),
+            Handler(Looper.getMainLooper()))
 
         player = playerFactory.get(
             audioResource,
             player,
-            BroadcastOnPlayerStateChanged(
-                audioResource.url(),
-                LocalBroadcastManager.getInstance(this),
-                Handler(Looper.getMainLooper())))
+            exoPlayer(),
+            mediaSource(audioResource.url, audioResource.userAgent, onPlayerStateChanged),
+            onPlayerStateChanged
+        )
 
         AudioAction.perform(player!!, intent)
+    }
+
+    private fun destination(
+        audioResource: A,
+        audioResourceIntent: AudioResourceIntent<A>,
+        info: NotificationInfo
+    ): Destination<A> {
+        return Destination(
+            audioResource,
+            audioResourceIntent,
+            info,
+            activityDestination(),
+            this.javaClass.kotlin,
+            this)
+    }
+
+    override fun onDestroy() {
+        release()
+        super.onDestroy()
     }
 
     private fun release() {
         becomingNoisyInterrupt.unregister()
         audioFocusInterrupt.unregister()
         let { player }?.release()
-    }
-
-    override fun onDestroy() {
-        release()
-        super.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent) {

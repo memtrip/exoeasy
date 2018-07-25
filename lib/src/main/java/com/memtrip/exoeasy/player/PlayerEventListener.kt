@@ -36,6 +36,7 @@ internal class PlayerEventListener constructor(
                 onPlayerStateListener.onCompleted()
             } else {
                 onStop()
+                onPlayerStateListener.onProgress(0, 0, 0)
                 onPlayerStateListener.onStop()
             }
         }

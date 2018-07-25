@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">exoplayer streaming example</string>
+    <string name="app_name">exoeasy</string>
+    <string name="app_notification_channel_id">exoeasy_id</string>
+    <string name="app_notification_channel_name">exoeasy</string>
 </resources>

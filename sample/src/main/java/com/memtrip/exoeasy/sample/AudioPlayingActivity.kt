@@ -5,28 +5,32 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import com.memtrip.exoeasy.AudioState
+import com.memtrip.exoeasy.broadcast.AudioState
+import com.memtrip.exoeasy.NotificationInfo
 import com.memtrip.exoeasy.broadcast.AudioStateUpdates
-import com.memtrip.exoeasy.player.AudioAction
+
 import com.memtrip.exoeasy.secondsProgressFormat
 import kotlinx.android.synthetic.main.audio_playing_activity.*
 import rx.subjects.PublishSubject
 
-class AudioPlayingActivity: AppCompatActivity() {
+class AudioPlayingActivity : AppCompatActivity() {
 
     private val subject: PublishSubject<AudioState> = PublishSubject.create()
 
     private val audioStateUpdates = AudioStateUpdates(subject)
 
-    lateinit var audioStreamController: HttpAudioStreamController
+    private lateinit var audioStreamController: HttpAudioStreamController
 
-    lateinit var audioResource: HttpAudioResource
+    private lateinit var audioResource: HttpAudioResource
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audio_playing_activity)
 
-        audioStreamController = HttpAudioStreamController(this)
+        audioStreamController = HttpAudioStreamController(
+            NotificationInfo("Jason Hogan", "This is it!", null),
+            this)
+
         audioResource = HttpAudioResource(
             "https://s3.eu-west-2.amazonaws.com/rewindit-audio/Rewind+It+Really+Nice+Trips+%2311+by+Jason+Hogan+%2819-07-18%29.mp3")
 
@@ -59,11 +63,16 @@ class AudioPlayingActivity: AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        print("ok")
+    }
+
     private fun seek(progress: Int) {
         audioStreamController.seek(progress, audioResource)
     }
 
-    private fun stateChanges(audioState: AudioState): Unit = when(audioState) {
+    private fun stateChanges(audioState: AudioState): Unit = when (audioState) {
         AudioState.Buffering -> {
             audio_playing_activity_progress.visibility = View.VISIBLE
         }
@@ -101,7 +110,7 @@ class AudioPlayingActivity: AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        audioStateUpdates.register(this, audioResource.url())
+        audioStateUpdates.register(this, audioResource.url)
     }
 
     override fun onStop() {

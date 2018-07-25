@@ -4,10 +4,14 @@ import android.content.Intent
 
 import android.os.Handler
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.memtrip.exoeasy.AudioResource
+
+import com.memtrip.exoeasy.notification.StreamingNotificationFactory
 import com.memtrip.exoeasy.player.OnPlayerStateChanged
 
-internal class BroadcastOnPlayerStateChanged(
+internal class BroadcastOnPlayerStateChanged<A : AudioResource>(
     private val url: String,
+    private val notificationFactory: StreamingNotificationFactory<A>,
     private val broadcastManager: LocalBroadcastManager,
     private val mainThreadHandler: Handler
 ) : OnPlayerStateChanged {
@@ -17,6 +21,7 @@ internal class BroadcastOnPlayerStateChanged(
             val intent = notifyIntent()
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.BUFFERING)
             broadcastManager.sendBroadcast(intent)
+            notificationFactory.update(intent)
         }
     }
 
@@ -25,6 +30,7 @@ internal class BroadcastOnPlayerStateChanged(
             val intent = notifyIntent()
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.PLAY)
             broadcastManager.sendBroadcast(intent)
+            notificationFactory.update(intent)
         }
     }
 
@@ -33,6 +39,7 @@ internal class BroadcastOnPlayerStateChanged(
             val intent = notifyIntent()
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.PAUSE)
             broadcastManager.sendBroadcast(intent)
+            notificationFactory.update(intent)
         }
     }
 
@@ -41,6 +48,7 @@ internal class BroadcastOnPlayerStateChanged(
             val intent = notifyIntent()
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.STOP)
             broadcastManager.sendBroadcast(intent)
+            notificationFactory.update(intent)
         }
     }
 
@@ -49,6 +57,7 @@ internal class BroadcastOnPlayerStateChanged(
             val intent = notifyIntent()
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.COMPLETED)
             broadcastManager.sendBroadcast(intent)
+            notificationFactory.update(intent)
         }
     }
 
@@ -69,6 +78,7 @@ internal class BroadcastOnPlayerStateChanged(
             intent.putExtra(EXTRA_BROADCAST_TYPE, BroadcastType.BUFFERING_ERROR)
             intent.putExtra(EXTRA_BROADCAST_BUFFERING_ERROR_THROWABLE, throwable)
             broadcastManager.sendBroadcast(intent)
+            notificationFactory.update(intent)
         }
     }
 
