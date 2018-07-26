@@ -65,7 +65,8 @@ class AudioPlayingActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        print("ok")
+        val audioResource = intent?.let { HttpAudioResourceIntent().get(intent) }
+        print(audioResource)
     }
 
     private fun seek(progress: Int) {
@@ -111,6 +112,7 @@ class AudioPlayingActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         audioStateUpdates.register(this, audioResource.url)
+        audioStreamController.tickle(audioResource)
     }
 
     override fun onStop() {

@@ -12,11 +12,15 @@ import com.memtrip.exoeasy.broadcast.AudioState
 class StreamingNotificationFactory<A : AudioResource>(
     private val config: NotificationConfig,
     private val audioStateRemoteView: AudioStateRemoteView<A>,
-    private val context: Context
+    private val context: Context,
+    private val notificationManager: NotificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 ) {
 
     fun update(intent: Intent) {
-        notificationManager.notify(EXTRA_PLAYER_NOTIFICATION_TYPE, create(AudioState.playerState(intent)))
+        if (config.showNotification) {
+            notificationManager.notify(EXTRA_PLAYER_NOTIFICATION_TYPE, create(AudioState.playerState(intent)))
+        }
     }
 
     private fun create(audioState: AudioState): Notification {
@@ -29,9 +33,7 @@ class StreamingNotificationFactory<A : AudioResource>(
             .build()
     }
 
-    private val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
     companion object {
-        const val EXTRA_PLAYER_NOTIFICATION_TYPE = 0x1337
+        private const val EXTRA_PLAYER_NOTIFICATION_TYPE = 0x1337
     }
 }

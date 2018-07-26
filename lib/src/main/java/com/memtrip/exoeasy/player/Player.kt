@@ -35,7 +35,7 @@ internal class Player constructor(
         exoPlayer,
         progressTracker,
         onPlayerStateListener),
-    eventListener: PlayerEventListener = PlayerEventListener(
+    private val eventListener: PlayerEventListener = PlayerEventListener(
         onPlayerStateListener,
         progressTick)
 ) {
@@ -72,6 +72,10 @@ internal class Player constructor(
     internal fun seek(percentage: Int) {
         val seekPosition = percentage * exoPlayer.duration / 100
         exoPlayer.seekTo(seekPosition)
+    }
+
+    internal fun tickle() {
+        eventListener.onPlayerStateChanged(exoPlayer.playWhenReady, exoPlayer.playbackState)
     }
 
     internal fun stop() {

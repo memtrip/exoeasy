@@ -31,6 +31,11 @@ abstract class AudioStreamController<A : AudioResource>(
         context.startService(AudioAction.seek(progress, intent().into(audioResource, notificationInfo, intent)))
     }
 
+    fun tickle(audioResource: A) {
+        val intent = Intent(context, streamingService().java)
+        context.startService(AudioAction.tickle(intent().into(audioResource, notificationInfo, intent)))
+    }
+
     abstract fun intent(): AudioResourceIntent<A>
 
     abstract fun streamingService(): KClass<out StreamingService<A>>

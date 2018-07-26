@@ -16,6 +16,7 @@ class AudioStreamingService : StreamingService<HttpAudioResource>() {
 
     override fun notificationConfig(): NotificationConfig {
         return NotificationConfig(
+            true,
             getString(R.string.app_notification_channel_id),
             android.R.drawable.ic_media_play)
     }

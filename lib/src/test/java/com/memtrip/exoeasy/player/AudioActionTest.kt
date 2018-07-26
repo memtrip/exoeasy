@@ -81,5 +81,20 @@ class AudioActionTest : Spek({
                 verify(player).seek(80)
             }
         }
+
+        on("a Tickle AudioAction") {
+
+            val intent = mock<Intent> {
+                on {
+                    getSerializableExtra("EXTRA_AUDIO_ACTION_TYPE")
+                }.thenReturn(AudioAction.TICKLE)
+            }
+
+            AudioAction.perform(player, intent)
+
+            it("should trigger `tickle` on player") {
+                verify(player).tickle()
+            }
+        }
     }
 })

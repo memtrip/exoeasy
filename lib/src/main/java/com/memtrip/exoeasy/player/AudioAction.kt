@@ -6,7 +6,8 @@ enum class AudioAction {
     PLAY,
     PAUSE,
     STOP,
-    SEEK;
+    SEEK,
+    TICKLE;
 
     companion object {
         private const val EXTRA_AUDIO_ACTION_TYPE = "EXTRA_AUDIO_ACTION_TYPE"
@@ -18,6 +19,7 @@ enum class AudioAction {
                 PAUSE -> player.pause()
                 STOP -> player.stop()
                 SEEK -> player.seek(audioSeekPercentage(intent))
+                TICKLE -> player.tickle()
             }
         }
 
@@ -47,6 +49,10 @@ enum class AudioAction {
         fun seek(percentage: Int, intent: Intent): Intent = with(intent) {
             putExtra(EXTRA_AUDIO_ACTION_TYPE, SEEK)
             putExtra(EXTRA_AUDIO_SEEK_PERCENTAGE, percentage)
+        }
+
+        fun tickle(intent: Intent): Intent = with(intent) {
+            putExtra(EXTRA_AUDIO_ACTION_TYPE, TICKLE)
         }
     }
 }
