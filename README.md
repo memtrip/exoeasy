@@ -4,7 +4,15 @@ An abstraction layer over an instance of ExoPlayer running on a background servi
 convenient mechanism for observing on playback updates and publishing playback commands. 
 The service can be configured to provide `RemoteViews` for controlling playback from a Notification.
 
+## Gradle dependency
+```groovy
+dependencies {
+    implementation 'com.memtrip.exoeasy:exoeasy:1.0'
+}
+```
+
 ## Sample project
+https://github.com/memtrip/ExoEasy/tree/master/sample
 
 ## Define your Audio resource
 An AudioResource contains the `url` that will be consumed by ExoPlayer, the device `userAgent`, 
@@ -19,7 +27,7 @@ data class HttpAudioResource(
 ) : AudioResource
 ```
 
-## provide extras via AudioResourceIntent
+## Provide extras via AudioResourceIntent
 The `AudioResource` you define must have an associated `AudioResourceIntent`. 
 The background service will provide ExoPlayer with; `url`, `userAgent` and `trackProgress`, these 
 extras and any you define are provided by `into` and retrieved by `get`.

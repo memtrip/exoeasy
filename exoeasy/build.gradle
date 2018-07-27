@@ -7,6 +7,34 @@ apply plugin: 'com.jfrog.bintray'
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'exoeasy'
+    bintrayOrg = 'memtrip'
+
+    publishedGroupId = 'com.memtrip.exoeasy'
+    artifact = 'exoeasy'
+
+    libraryDescription = 'An abstraction layer over an instance of ExoPlayer running on a background service. Exoeasy provides a \n' +
+            'convenient mechanism for observing on playback updates and publishing playback commands. \n' +
+            'The service can be configured to provide `RemoteViews` for controlling playback from a Notification.'
+    siteUrl = 'https://github.com/memtrip/exoeasy'
+    gitUrl = 'https://github.com/memtrip/exoeasy.git'
+
+    libraryVersion = '1.0'
+
+    developerId = 'samkirton'
+    developerName = 'Samuel Kirton'
+    developerEmail = 'sam@memtrip.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+version = libraryVersion
+group = publishedGroupId
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -56,27 +84,19 @@ dependencies {
     testImplementation 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'
 }
 
-ext {
-    libraryDescription = 'An abstraction layer over an instance of ExoPlayer running on a background service. Exoeasy provides a \n' +
-            'convenient mechanism for observing on playback updates and publishing playback commands. \n' +
-            'The service can be configured to provide `RemoteViews` for controlling playback from a Notification.'
-    siteUrl = 'https://github.com/memtrip/ExoEasy'
-    gitUrl = 'https://github.com/memtrip/ExoEasy.git'
-}
-
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = 'property("user")'
+    key = 'property("apikey")'
 
     configurations = ['archives']
     pkg {
-        repo = 'maven'
-        name = 'exoeasy'
-        userOrg = 'memtrip'
+        repo = bintrayRepo
+        name = bintrayName
+        userOrg = bintrayOrg
         desc = libraryDescription
         websiteUrl = siteUrl
         vcsUrl = gitUrl
-        licenses = ["Apache-2.0"]
+        licenses = allLicenses
         publish = true
         publicDownloadNumbers = true
     }
@@ -87,28 +107,28 @@ install {
         pom {
             project {
                 packaging 'aar'
-                groupId 'com.memtrip.exoeasy'
-                artifactId 'exoeasy'
+                groupId publishedGroupId
+                artifactId artifact
 
-                name 'ExoEasy'
+                name 'SQLKing client'
                 description libraryDescription
                 url 'http://www.memtrip.com'
 
                 licenses {
                     license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        name licenseName
+                        url licenseUrl
                     }
                 }
                 developers {
                     developer {
-                        id 'samkirton'
-                        name 'Samuel Kirton'
-                        email 'sam@memtrip.com'
+                        id developerId
+                        name developerName
+                        email developerEmail
                     }
                 }
                 scm {
-                    connection siteUrl
+                    connection gitUrl
                     developerConnection gitUrl
                     url siteUrl
                 }
@@ -122,17 +142,6 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
 artifacts {
-    archives javadocJar
     archives sourcesJar
 }
