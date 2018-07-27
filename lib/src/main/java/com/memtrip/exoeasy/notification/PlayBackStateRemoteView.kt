@@ -6,8 +6,8 @@ import android.content.Intent
 import android.widget.RemoteViews
 import androidx.annotation.LayoutRes
 import com.memtrip.exoeasy.AudioResource
-import com.memtrip.exoeasy.broadcast.AudioState
-import com.memtrip.exoeasy.player.AudioAction
+import com.memtrip.exoeasy.broadcast.PlayBackState
+import com.memtrip.exoeasy.player.PlayBackAction
 
 /**
  * Copyright 2013-present memtrip LTD.
@@ -24,7 +24,7 @@ import com.memtrip.exoeasy.player.AudioAction
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-abstract class AudioStateRemoteView<A : AudioResource>(
+abstract class PlayBackStateRemoteView<A : AudioResource>(
     @LayoutRes remoteViewLayout: Int,
     val destination: Destination<A>,
     val context: Context,
@@ -32,15 +32,15 @@ abstract class AudioStateRemoteView<A : AudioResource>(
 ) {
 
     protected fun playPendingIntent(): PendingIntent {
-        return pendingIntent(context, AudioAction.PLAY.ordinal, AudioAction.play(destination.createServiceIntent()))
+        return pendingIntent(context, PlayBackAction.PLAY.ordinal, PlayBackAction.play(destination.createServiceIntent()))
     }
 
     protected fun pausePendingIntent(): PendingIntent {
-        return pendingIntent(context, AudioAction.PAUSE.ordinal, AudioAction.pause(destination.createServiceIntent()))
+        return pendingIntent(context, PlayBackAction.PAUSE.ordinal, PlayBackAction.pause(destination.createServiceIntent()))
     }
 
     protected fun stopPendingIntent(): PendingIntent {
-        return pendingIntent(context, AudioAction.STOP.ordinal, AudioAction.stop(destination.createServiceIntent()))
+        return pendingIntent(context, PlayBackAction.STOP.ordinal, PlayBackAction.stop(destination.createServiceIntent()))
     }
 
     private fun pendingIntent(context: Context, requestCode: Int, intent: Intent): PendingIntent {
@@ -51,15 +51,15 @@ abstract class AudioStateRemoteView<A : AudioResource>(
             PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    internal fun render(audioState: AudioState): RemoteViews = when (audioState) {
-        AudioState.Buffering -> renderBufferingState(remoteViews)
-        AudioState.Play -> renderPlayState(remoteViews)
-        AudioState.Pause -> renderPauseState(remoteViews)
-        AudioState.Stop -> renderStopState(remoteViews)
-        AudioState.Completed -> renderCompletedState(remoteViews)
-        is AudioState.Progress ->
+    internal fun render(audioState: PlayBackState): RemoteViews = when (audioState) {
+        PlayBackState.Buffering -> renderBufferingState(remoteViews)
+        PlayBackState.Play -> renderPlayState(remoteViews)
+        PlayBackState.Pause -> renderPauseState(remoteViews)
+        PlayBackState.Stop -> renderStopState(remoteViews)
+        PlayBackState.Completed -> renderCompletedState(remoteViews)
+        is PlayBackState.Progress ->
             throw IllegalStateException("It would be too memory intensive to update the notification every second")
-        is AudioState.BufferingError -> renderBufferingErrorState(
+        is PlayBackState.BufferingError -> renderBufferingErrorState(
             audioState.throwable,
             remoteViews
         )

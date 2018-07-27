@@ -41,9 +41,7 @@ class StreamingNotificationFactoryTest : Spek({
         val config by memoized { mock<NotificationConfig>() }
 
         val audioStateRemoteView by memoized {
-            mock<AudioStateRemoteView<AudioResource>> {
-                on { destination }.thenReturn(mock())
-            }
+            mock<() -> PlayBackStateRemoteView<AudioResource>>()
         }
 
         val context by memoized { mock<Context>() }

@@ -16,7 +16,20 @@ package com.memtrip.exoeasy
  * limitations under the License.
  */
 interface AudioResource {
+    /**
+     * The URL of the audio resource
+     */
     val url: String
+
+    /**
+     * Device user agent e.g.
+     * ${BuildConfig.VERSION_NAME}/${BuildConfig.VERSION_CODE}
+     */
     val userAgent: String
+
+    /**
+     * Track audio progress periodically with:
+     * @see com.memtrip.exoeasy.broadcast.PlayBackState.Progress
+     */
     val trackProgress: Boolean
 }

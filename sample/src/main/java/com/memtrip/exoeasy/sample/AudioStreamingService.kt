@@ -5,7 +5,7 @@ import android.app.Activity
 import com.memtrip.exoeasy.notification.Destination
 import com.memtrip.exoeasy.notification.NotificationConfig
 import com.memtrip.exoeasy.player.StreamingService
-import com.memtrip.exoeasy.notification.AudioStateRemoteView
+import com.memtrip.exoeasy.notification.PlayBackStateRemoteView
 
 import com.memtrip.exoeasy.remoteview.PlayPauseStopRemoteView
 import kotlin.reflect.KClass
@@ -16,14 +16,12 @@ class AudioStreamingService : StreamingService<HttpAudioResource>() {
 
     override fun notificationConfig(): NotificationConfig {
         return NotificationConfig(
-            true,
-            getString(R.string.app_notification_channel_id),
-            android.R.drawable.ic_media_play)
+            false)
     }
 
-    override fun audioStateRemoteView(
+    override fun playBackStateRemoteView(
         destination: Destination<HttpAudioResource>
-    ): AudioStateRemoteView<HttpAudioResource> {
+    ): PlayBackStateRemoteView<HttpAudioResource> {
         return PlayPauseStopRemoteView(this, destination)
     }
 

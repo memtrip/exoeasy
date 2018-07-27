@@ -2,6 +2,8 @@ package com.memtrip.exoeasy.broadcast
 
 import android.content.Context
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.memtrip.exoeasy.AudioResource
+import rx.Observable
 import rx.subjects.PublishSubject
 
 /**
@@ -19,14 +21,24 @@ import rx.subjects.PublishSubject
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class AudioStateUpdates(publishSubject: PublishSubject<AudioState>) {
+class PlayBackStateUpdates<A : AudioResource>(
+    private val audioResource: A
+) {
 
-    private val broadcastReceiver: AudioStateBroadcastReceiver = AudioStateBroadcastReceiver(publishSubject)
+    private val publishSubject: PublishSubject<PlayBackState> = PublishSubject.create<PlayBackState>()
 
-    fun register(context: Context, url: String) {
+    private val broadcastReceiver: PlayBackStateBroadcastReceiver = PlayBackStateBroadcastReceiver(publishSubject)
+
+    fun playBackStateChanges(): Observable<PlayBackState> {
+        return publishSubject.asObservable()
+    }
+
+    fun register(context: Context) {
         LocalBroadcastManager
                 .getInstance(context)
-                .registerReceiver(broadcastReceiver, AudioStateBroadcastReceiver.intentFilter(url))
+                .registerReceiver(
+                    broadcastReceiver,
+                    PlayBackStateBroadcastReceiver.intentFilter(audioResource.url))
     }
 
     fun unregister(context: Context) {

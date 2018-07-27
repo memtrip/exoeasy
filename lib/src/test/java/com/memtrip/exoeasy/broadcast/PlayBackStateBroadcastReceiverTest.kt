@@ -31,14 +31,14 @@ import rx.subjects.PublishSubject
  * limitations under the License.
  */
 @RunWith(JUnitPlatform::class)
-class AudioStateBroadcastReceiverTest : Spek({
+class PlayBackStateBroadcastReceiverTest : Spek({
 
     val context: Context = mock()
 
-    given("a AudioStateBroadcastReceiver") {
+    given("a PlayBackStateBroadcastReceiver") {
 
-        val publishSubject by memoized { PublishSubject.create<AudioState>() }
-        val audioStateBroadcastReceiver by memoized { AudioStateBroadcastReceiver(publishSubject) }
+        val publishSubject by memoized { PublishSubject.create<PlayBackState>() }
+        val playBackStateBroadcastReceiver by memoized { PlayBackStateBroadcastReceiver(publishSubject) }
 
         on("a BroadcastType of BUFFERING") {
 
@@ -50,10 +50,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return an AudioState of Buffering") {
-                assertEquals(AudioState.Buffering, state.onNextEvents[0])
+            it("should return an PlayBackState of Buffering") {
+                assertEquals(PlayBackState.Buffering, state.onNextEvents[0])
             }
         }
 
@@ -67,10 +67,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return an AudioState of Play") {
-                assertEquals(AudioState.Play, state.onNextEvents[0])
+            it("should return an PlayBackState of Play") {
+                assertEquals(PlayBackState.Play, state.onNextEvents[0])
             }
         }
 
@@ -84,10 +84,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return an AudioState of Pause") {
-                assertEquals(AudioState.Pause, state.onNextEvents[0])
+            it("should return an PlayBackState of Pause") {
+                assertEquals(PlayBackState.Pause, state.onNextEvents[0])
             }
         }
 
@@ -101,10 +101,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return an AudioState of Stop") {
-                assertEquals(AudioState.Stop, state.onNextEvents[0])
+            it("should return an PlayBackState of Stop") {
+                assertEquals(PlayBackState.Stop, state.onNextEvents[0])
             }
         }
 
@@ -118,10 +118,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return an AudioState of Completed") {
-                assertEquals(AudioState.Completed, state.onNextEvents[0])
+            it("should return an PlayBackState of Completed") {
+                assertEquals(PlayBackState.Completed, state.onNextEvents[0])
             }
         }
 
@@ -147,10 +147,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return an AudioState of Progress(10, 50, 100)") {
-                assertEquals(AudioState.Progress(10, 50, 100), state.onNextEvents[0])
+            it("should return an PlayBackState of Progress(10, 50, 100)") {
+                assertEquals(PlayBackState.Progress(10, 50, 100), state.onNextEvents[0])
             }
         }
 
@@ -170,10 +170,10 @@ class AudioStateBroadcastReceiverTest : Spek({
 
             val state = publishSubject.asObservable().test()
 
-            audioStateBroadcastReceiver.onReceive(context, intent)
+            playBackStateBroadcastReceiver.onReceive(context, intent)
 
-            it("should return a AudioState of BufferingError(throwable)") {
-                assertEquals(AudioState.BufferingError(throwable), state.onNextEvents[0])
+            it("should return a PlayBackState of BufferingError(throwable)") {
+                assertEquals(PlayBackState.BufferingError(throwable), state.onNextEvents[0])
             }
         }
     }

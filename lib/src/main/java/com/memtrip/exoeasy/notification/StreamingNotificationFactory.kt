@@ -7,7 +7,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.memtrip.exoeasy.AudioResource
 
-import com.memtrip.exoeasy.broadcast.AudioState
+import com.memtrip.exoeasy.broadcast.PlayBackState
 
 /**
  * Copyright 2013-present memtrip LTD.
@@ -26,7 +26,7 @@ import com.memtrip.exoeasy.broadcast.AudioState
  */
 class StreamingNotificationFactory<A : AudioResource>(
     private val config: NotificationConfig,
-    private val audioStateRemoteView: AudioStateRemoteView<A>,
+    private val audioStateRemoteViewProvider: () -> PlayBackStateRemoteView<A>,
     private val context: Context,
     private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -34,16 +34,17 @@ class StreamingNotificationFactory<A : AudioResource>(
 
     fun update(intent: Intent) {
         if (config.showNotification) {
-            notificationManager.notify(EXTRA_PLAYER_NOTIFICATION_TYPE, create(AudioState.playerState(intent)))
+            notificationManager.notify(EXTRA_PLAYER_NOTIFICATION_TYPE, create(PlayBackState.playerState(intent)))
         }
     }
 
-    private fun create(audioState: AudioState): Notification {
+    private fun create(audioState: PlayBackState): Notification {
+        val audioRemoteView = audioStateRemoteViewProvider()
         return NotificationCompat.Builder(context, config.channelId)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setSmallIcon(config.statusBarIcon)
-            .setCustomContentView(audioStateRemoteView.render(audioState))
-            .setContentIntent(audioStateRemoteView.destination.createActivityIntent())
+            .setCustomContentView(audioRemoteView.render(audioState))
+            .setContentIntent(audioRemoteView.destination.createActivityIntent())
             .setOngoing(true)
             .build()
     }

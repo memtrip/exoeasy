@@ -18,7 +18,20 @@ import androidx.annotation.DrawableRes
  * limitations under the License.
  */
 data class NotificationConfig(
+    /**
+     * Should a playback notification be shown
+     */
     val showNotification: Boolean,
+
+    /**
+     * The channelId required by API versions 26+
+     * @see android.app.NotificationManager.createNotificationChannel
+     */
     val channelId: String = "",
+
+    /**
+     * The icon displayed in the statusBar for the streaming service notification
+     * @see androidx.core.app.NotificationCompat.Builder.setSmallIcon
+     */
     @DrawableRes val statusBarIcon: Int = -1
 )

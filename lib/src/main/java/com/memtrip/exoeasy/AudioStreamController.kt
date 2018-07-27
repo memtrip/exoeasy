@@ -2,7 +2,7 @@ package com.memtrip.exoeasy
 
 import android.content.Context
 import android.content.Intent
-import com.memtrip.exoeasy.player.AudioAction
+import com.memtrip.exoeasy.player.PlayBackAction
 import com.memtrip.exoeasy.player.StreamingService
 import kotlin.reflect.KClass
 
@@ -21,37 +21,36 @@ import kotlin.reflect.KClass
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-abstract class AudioStreamController<A : AudioResource>(
+class AudioStreamController<A : AudioResource>(
+    private val audioResource: A,
+    private val audioResourceIntent: AudioResourceIntent<A>,
     private val notificationInfo: NotificationInfo,
+    private val streamingService: KClass<out StreamingService<A>>,
     private val context: Context
 ) {
 
-    fun play(audioResource: A) {
-        val intent = Intent(context, streamingService().java)
-        context.startService(AudioAction.play(intent().into(audioResource, notificationInfo, intent)))
+    fun play() {
+        val intent = Intent(context, streamingService.java)
+        context.startService(PlayBackAction.play(audioResourceIntent.into(audioResource, notificationInfo, intent)))
     }
 
-    fun pause(audioResource: A) {
-        val intent = Intent(context, streamingService().java)
-        context.startService(AudioAction.pause(intent().into(audioResource, notificationInfo, intent)))
+    fun pause() {
+        val intent = Intent(context, streamingService.java)
+        context.startService(PlayBackAction.pause(audioResourceIntent.into(audioResource, notificationInfo, intent)))
     }
 
-    fun stop(audioResource: A) {
-        val intent = Intent(context, streamingService().java)
-        context.startService(AudioAction.stop(intent().into(audioResource, notificationInfo, intent)))
+    fun stop() {
+        val intent = Intent(context, streamingService.java)
+        context.startService(PlayBackAction.stop(audioResourceIntent.into(audioResource, notificationInfo, intent)))
     }
 
-    fun seek(progress: Int, audioResource: A) {
-        val intent = Intent(context, streamingService().java)
-        context.startService(AudioAction.seek(progress, intent().into(audioResource, notificationInfo, intent)))
+    fun seek(progress: Int) {
+        val intent = Intent(context, streamingService.java)
+        context.startService(PlayBackAction.seek(progress, audioResourceIntent.into(audioResource, notificationInfo, intent)))
     }
 
-    fun tickle(audioResource: A) {
-        val intent = Intent(context, streamingService().java)
-        context.startService(AudioAction.tickle(intent().into(audioResource, notificationInfo, intent)))
+    fun tickle() {
+        val intent = Intent(context, streamingService.java)
+        context.startService(PlayBackAction.tickle(audioResourceIntent.into(audioResource, notificationInfo, intent)))
     }
-
-    abstract fun intent(): AudioResourceIntent<A>
-
-    abstract fun streamingService(): KClass<out StreamingService<A>>
 }

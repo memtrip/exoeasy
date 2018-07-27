@@ -26,7 +26,7 @@ import com.memtrip.exoeasy.notification.Destination
 import com.memtrip.exoeasy.notification.NotificationConfig
 
 import com.memtrip.exoeasy.notification.StreamingNotificationFactory
-import com.memtrip.exoeasy.notification.AudioStateRemoteView
+import com.memtrip.exoeasy.notification.PlayBackStateRemoteView
 import kotlin.reflect.KClass
 
 /**
@@ -52,16 +52,44 @@ abstract class StreamingService<A : AudioResource> : Service() {
 
     private var player: Player? = null
 
+    /**
+     * Used to provide ExoPlayer with; `url`, `userAgent` and `trackProgress`
+     */
     protected abstract fun audioResourceIntent(): AudioResourceIntent<A>
 
-    protected abstract fun notificationConfig(): NotificationConfig
+    /**
+     * Configure the playback notification
+     */
+    protected open fun notificationConfig(): NotificationConfig {
+        return NotificationConfig(false)
+    }
 
-    protected abstract fun audioStateRemoteView(
+    /**
+     * Provide a custom RemoteView for the playback notification, one of the preset PlayBackStateRemoteView
+     * implementations can also be used.
+     * @see com.memtrip.exoeasy.remoteview.PlayPauseRemoteView
+     * @see com.memtrip.exoeasy.remoteview.PlayPauseStopRemoteView
+     */
+    protected open fun playBackStateRemoteView(
         destination: Destination<A>
-    ): AudioStateRemoteView<A>
+    ): PlayBackStateRemoteView<A> {
+        throw IllegalStateException("playBackStateRemoteView() must be overridden in " +
+            "com.memtrip.exoeasy.player.StreamingService " +
+            "when you have showNotification set to true in NotificationConfig")
+    }
 
-    protected abstract fun activityDestination(): KClass<out Activity>
+    /**
+     * The destination activity to navigate to when the playback notification is selected
+     */
+    protected open fun activityDestination(): KClass<out Activity> {
+        throw IllegalStateException("activityDestination() must be overridden in " +
+            "com.memtrip.exoeasy.player.StreamingService " +
+            "when you have showNotification set to true in NotificationConfig")
+    }
 
+    /**
+     * Configure use your own instance of ExoPlayer
+     */
     protected open fun exoPlayer(): ExoPlayer {
         return ExoPlayerFactory.newSimpleInstance(
             DefaultRenderersFactory(this),
@@ -69,6 +97,9 @@ abstract class StreamingService<A : AudioResource> : Service() {
             DefaultLoadControl())
     }
 
+    /**
+     * Configure your own instance of MediaSource
+     */
     protected open fun mediaSource(
         url: String,
         userAgent: String,
@@ -112,12 +143,13 @@ abstract class StreamingService<A : AudioResource> : Service() {
         val onPlayerStateChanged = BroadcastOnPlayerStateChanged(
             audioResource.url,
             StreamingNotificationFactory(
-                notificationConfig(),
-                audioStateRemoteView(destination(
-                    audioResource,
-                    audioResourceIntent(),
-                    notificationInfo
-                )), this),
+                notificationConfig(), {
+                    playBackStateRemoteView(destination(
+                        audioResource,
+                        audioResourceIntent(),
+                        notificationInfo).value)
+                },
+                this),
             LocalBroadcastManager.getInstance(this),
             Handler(Looper.getMainLooper()))
 
@@ -129,21 +161,21 @@ abstract class StreamingService<A : AudioResource> : Service() {
             onPlayerStateChanged
         )
 
-        AudioAction.perform(player!!, intent)
+        PlayBackAction.perform(player!!, intent)
     }
 
     private fun destination(
         audioResource: A,
         audioResourceIntent: AudioResourceIntent<A>,
         info: NotificationInfo
-    ): Destination<A> {
-        return Destination(
+    ): Lazy<Destination<A>> {
+        return lazy { Destination(
             audioResource,
             audioResourceIntent,
             info,
             activityDestination(),
             this.javaClass.kotlin,
-            this)
+            this) }
     }
 
     override fun onDestroy() {

@@ -17,36 +17,36 @@ import android.content.Intent
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-sealed class AudioState {
-    object Buffering : AudioState()
-    object Play : AudioState()
-    object Pause : AudioState()
-    object Stop : AudioState()
-    object Completed : AudioState()
+sealed class PlayBackState {
+    object Buffering : PlayBackState()
+    object Play : PlayBackState()
+    object Pause : PlayBackState()
+    object Stop : PlayBackState()
+    object Completed : PlayBackState()
     data class Progress(
         val percentage: Int,
         val currentPosition: Long,
         val duration: Long
-    ) : AudioState()
+    ) : PlayBackState()
     data class BufferingError(
         val throwable: Throwable
-    ) : AudioState()
+    ) : PlayBackState()
 
     companion object {
-        fun playerState(intent: Intent): AudioState = when (BroadcastOnPlayerStateChanged.broadcastType(intent)) {
-            BroadcastType.BUFFERING -> AudioState.Buffering
-            BroadcastType.PLAY -> AudioState.Play
-            BroadcastType.PAUSE -> AudioState.Pause
-            BroadcastType.STOP -> AudioState.Stop
-            BroadcastType.COMPLETED -> AudioState.Completed
+        fun playerState(intent: Intent): PlayBackState = when (BroadcastOnPlayerStateChanged.broadcastType(intent)) {
+            BroadcastType.BUFFERING -> PlayBackState.Buffering
+            BroadcastType.PLAY -> PlayBackState.Play
+            BroadcastType.PAUSE -> PlayBackState.Pause
+            BroadcastType.STOP -> PlayBackState.Stop
+            BroadcastType.COMPLETED -> PlayBackState.Completed
             BroadcastType.PROGRESS -> {
-                AudioState.Progress(
+                PlayBackState.Progress(
                     BroadcastOnPlayerStateChanged.progressPercentage(intent),
                     BroadcastOnPlayerStateChanged.progressPosition(intent),
                     BroadcastOnPlayerStateChanged.progressDuration(intent))
             }
             BroadcastType.BUFFERING_ERROR -> {
-                AudioState.BufferingError(BroadcastOnPlayerStateChanged.bufferError(intent))
+                PlayBackState.BufferingError(BroadcastOnPlayerStateChanged.bufferError(intent))
             }
         }
     }

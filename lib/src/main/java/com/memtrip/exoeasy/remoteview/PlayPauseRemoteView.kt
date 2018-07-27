@@ -6,7 +6,7 @@ import android.widget.RemoteViews
 import com.memtrip.exoeasy.AudioResource
 
 import com.memtrip.exoeasy.R
-import com.memtrip.exoeasy.notification.AudioStateRemoteView
+import com.memtrip.exoeasy.notification.PlayBackStateRemoteView
 import com.memtrip.exoeasy.notification.Destination
 
 /**
@@ -27,7 +27,7 @@ import com.memtrip.exoeasy.notification.Destination
 class PlayPauseRemoteView<A : AudioResource>(
     context: Context,
     destination: Destination<A>
-) : AudioStateRemoteView<A>(R.layout.notification_play_pause, destination, context) {
+) : PlayBackStateRemoteView<A>(R.layout.notification_play_pause, destination, context) {
 
     override fun renderPlayState(remoteViews: RemoteViews): RemoteViews {
         remoteViews.setViewVisibility(R.id.notification_play_pause_play_button, View.GONE)

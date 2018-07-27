@@ -17,7 +17,7 @@ import android.content.Intent
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-enum class AudioAction {
+enum class PlayBackAction {
     PLAY,
     PAUSE,
     STOP,
@@ -29,7 +29,7 @@ enum class AudioAction {
         private const val EXTRA_AUDIO_SEEK_PERCENTAGE = "EXTRA_AUDIO_SEEK_PERCENTAGE"
 
         internal fun perform(player: Player, intent: Intent) {
-            return when (audioAction(intent)) {
+            return when (playBackAction(intent)) {
                 PLAY -> player.play()
                 PAUSE -> player.pause()
                 STOP -> player.stop()
@@ -38,8 +38,8 @@ enum class AudioAction {
             }
         }
 
-        private fun audioAction(intent: Intent): AudioAction {
-            return intent.getSerializableExtra(EXTRA_AUDIO_ACTION_TYPE) as AudioAction
+        private fun playBackAction(intent: Intent): PlayBackAction {
+            return intent.getSerializableExtra(EXTRA_AUDIO_ACTION_TYPE) as PlayBackAction
         }
 
         private fun audioSeekPercentage(intent: Intent): Int {

@@ -5,45 +5,49 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import com.memtrip.exoeasy.broadcast.AudioState
+import com.memtrip.exoeasy.AudioStreamController
+import com.memtrip.exoeasy.broadcast.PlayBackState
 import com.memtrip.exoeasy.NotificationInfo
-import com.memtrip.exoeasy.broadcast.AudioStateUpdates
+import com.memtrip.exoeasy.broadcast.PlayBackStateUpdates
 
 import com.memtrip.exoeasy.secondsProgressFormat
 import kotlinx.android.synthetic.main.audio_playing_activity.*
-import rx.subjects.PublishSubject
 
 class AudioPlayingActivity : AppCompatActivity() {
 
-    private val subject: PublishSubject<AudioState> = PublishSubject.create()
-
-    private val audioStateUpdates = AudioStateUpdates(subject)
-
-    private lateinit var audioStreamController: HttpAudioStreamController
-
     private lateinit var audioResource: HttpAudioResource
+
+    private lateinit var audioStreamController: AudioStreamController<HttpAudioResource>
+
+    private lateinit var playBackStateUpdates: PlayBackStateUpdates<HttpAudioResource>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.audio_playing_activity)
 
-        audioStreamController = HttpAudioStreamController(
+        audioResource = HttpAudioResource(
+            "https://s3.eu-west-2.amazonaws.com/rewindit-audio/Rewind+It+Really+Nice+Trips+%2311+by+Jason+Hogan+%2819-07-18%29.mp3",
+            "extra property!")
+
+        audioStreamController = AudioStreamController(
+            audioResource,
+            HttpAudioResourceIntent(),
             NotificationInfo("Jason Hogan", "This is it!", null),
+            AudioStreamingService::class,
             this)
 
-        audioResource = HttpAudioResource(
-            "https://s3.eu-west-2.amazonaws.com/rewindit-audio/Rewind+It+Really+Nice+Trips+%2311+by+Jason+Hogan+%2819-07-18%29.mp3")
+        playBackStateUpdates = PlayBackStateUpdates(audioResource)
 
         audio_playing_activity_play_button.setOnClickListener {
-            audioStreamController.play(audioResource)
+            audioStreamController.play()
         }
 
         audio_playing_activity_pause_button.setOnClickListener {
-            audioStreamController.pause(audioResource)
+            audioStreamController.pause()
         }
 
         audio_playing_activity_stop.setOnClickListener {
-            audioStreamController.stop(audioResource)
+            audioStreamController.stop()
         }
 
         audio_playing_activity_seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -58,7 +62,7 @@ class AudioPlayingActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekbar: SeekBar?) { }
         })
 
-        subject.subscribe {
+        playBackStateUpdates.playBackStateChanges().subscribe {
             stateChanges(it)
         }
     }
@@ -70,53 +74,58 @@ class AudioPlayingActivity : AppCompatActivity() {
     }
 
     private fun seek(progress: Int) {
-        audioStreamController.seek(progress, audioResource)
+        audioStreamController.seek(progress)
     }
 
-    private fun stateChanges(audioState: AudioState): Unit = when (audioState) {
-        AudioState.Buffering -> {
+    private fun stateChanges(playBackState: PlayBackState): Unit = when (playBackState) {
+        PlayBackState.Buffering -> {
             audio_playing_activity_progress.visibility = View.VISIBLE
+            audio_playing_activity_play_button.visibility = View.GONE
+            audio_playing_activity_pause_button.visibility = View.GONE
         }
-        AudioState.Play -> {
+        PlayBackState.Play -> {
             audio_playing_activity_progress.visibility = View.GONE
             audio_playing_activity_play_button.visibility = View.GONE
             audio_playing_activity_pause_button.visibility = View.VISIBLE
         }
-        AudioState.Pause -> {
+        PlayBackState.Pause -> {
             audio_playing_activity_progress.visibility = View.GONE
             audio_playing_activity_play_button.visibility = View.VISIBLE
             audio_playing_activity_pause_button.visibility = View.GONE
         }
-        AudioState.Stop -> {
+        PlayBackState.Stop -> {
             audio_playing_activity_progress.visibility = View.GONE
             audio_playing_activity_play_button.visibility = View.VISIBLE
             audio_playing_activity_pause_button.visibility = View.GONE
             audio_playing_activity_seekbar.progress = 0
         }
-        AudioState.Completed -> {
+        PlayBackState.Completed -> {
             audio_playing_activity_progress.visibility = View.GONE
             audio_playing_activity_play_button.visibility = View.VISIBLE
             audio_playing_activity_pause_button.visibility = View.GONE
         }
-        is AudioState.Progress -> {
+        is PlayBackState.Progress -> {
             audio_playing_activity_progress.visibility = View.GONE
-            audio_playing_activity_seekbar.progress = audioState.percentage
-            audio_playing_activity_duration_textview.text = audioState.duration.secondsProgressFormat()
-            audio_playing_activity_progress_textview.text = audioState.currentPosition.secondsProgressFormat()
+            audio_playing_activity_seekbar.progress = playBackState.percentage
+            audio_playing_activity_duration_textview.text = playBackState.duration.secondsProgressFormat()
+            audio_playing_activity_progress_textview.text = playBackState.currentPosition.secondsProgressFormat()
         }
-        is AudioState.BufferingError -> {
+        is PlayBackState.BufferingError -> {
             audio_playing_activity_progress.visibility = View.GONE
+            audio_playing_activity_play_button.visibility = View.VISIBLE
+            audio_playing_activity_pause_button.visibility = View.GONE
+            audio_playing_activity_seekbar.progress = 0
         }
     }
 
     override fun onStart() {
         super.onStart()
-        audioStateUpdates.register(this, audioResource.url)
-        audioStreamController.tickle(audioResource)
+        playBackStateUpdates.register(this)
+        audioStreamController.tickle()
     }
 
     override fun onStop() {
         super.onStop()
-        audioStateUpdates.unregister(this)
+        playBackStateUpdates.unregister(this)
     }
 }

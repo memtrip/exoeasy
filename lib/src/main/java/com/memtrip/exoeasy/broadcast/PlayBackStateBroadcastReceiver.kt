@@ -22,12 +22,12 @@ import rx.subjects.PublishSubject
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-internal class AudioStateBroadcastReceiver(
-    private val publishSubject: PublishSubject<AudioState>
+internal class PlayBackStateBroadcastReceiver(
+    private val publishSubject: PublishSubject<PlayBackState>
 ) : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        publishSubject.onNext(AudioState.playerState(intent))
+        publishSubject.onNext(PlayBackState.playerState(intent))
     }
 
     companion object {

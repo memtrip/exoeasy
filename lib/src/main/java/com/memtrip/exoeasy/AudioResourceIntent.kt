@@ -23,6 +23,9 @@ abstract class AudioResourceIntent<A : AudioResource> {
 
     @CallSuper
     open fun into(data: A, notificationInfo: NotificationInfo, intent: Intent): Intent {
+        intent.putExtra(HTTP_AUDIO_STREAM_URL, data.url)
+        intent.putExtra(HTTP_AUDIO_STREAM_USER_AGENT, data.userAgent)
+        intent.putExtra(HTTP_AUDIO_STREAM_TRACK_PROGRESS, data.trackProgress)
         intent.putExtra(HTTP_AUDIO_STREAM_NOTIFICATION_INFO_TITLE, notificationInfo.title)
         intent.putExtra(HTTP_AUDIO_STREAM_NOTIFICATION_INFO_BODY, notificationInfo.body)
         intent.putExtra(HTTP_AUDIO_STREAM_NOTIFICATION_INFO_ICON, notificationInfo.icon)
@@ -43,5 +46,8 @@ abstract class AudioResourceIntent<A : AudioResource> {
         const val HTTP_AUDIO_STREAM_NOTIFICATION_INFO_TITLE = "HTTP_AUDIO_STREAM_NOTIFICATION_INFO_TITLE"
         const val HTTP_AUDIO_STREAM_NOTIFICATION_INFO_BODY = "HTTP_AUDIO_STREAM_NOTIFICATION_INFO_BODY"
         const val HTTP_AUDIO_STREAM_NOTIFICATION_INFO_ICON = "HTTP_AUDIO_STREAM_NOTIFICATION_INFO_ICON"
+        const val HTTP_AUDIO_STREAM_URL = "HTTP_AUDIO_STREAM_URL"
+        const val HTTP_AUDIO_STREAM_USER_AGENT = "HTTP_AUDIO_STREAM_USER_AGENT"
+        const val HTTP_AUDIO_STREAM_TRACK_PROGRESS = "HTTP_AUDIO_STREAM_TRACK_PROGRESS"
     }
 }

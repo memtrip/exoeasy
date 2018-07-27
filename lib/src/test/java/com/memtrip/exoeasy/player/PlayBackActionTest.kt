@@ -27,85 +27,85 @@ import org.junit.runner.RunWith
  * limitations under the License.
  */
 @RunWith(JUnitPlatform::class)
-class AudioActionTest : Spek({
+class PlayBackActionTest : Spek({
 
-    given("a player being used in AudioAction") {
+    given("a player being used in PlayBackAction") {
 
         val player by memoized { mock<Player>() }
 
-        on("a Play AudioAction") {
+        on("a Play PlayBackAction") {
 
             val intent = mock<Intent> {
                 on {
                     getSerializableExtra("EXTRA_AUDIO_ACTION_TYPE")
-                }.thenReturn(AudioAction.PLAY)
+                }.thenReturn(PlayBackAction.PLAY)
             }
 
-            AudioAction.perform(player, intent)
+            PlayBackAction.perform(player, intent)
 
             it("should trigger `play` on player") {
                 verify(player).play()
             }
         }
 
-        on("a Pause AudioAction") {
+        on("a Pause PlayBackAction") {
 
             val intent = mock<Intent> {
                 on {
                     getSerializableExtra("EXTRA_AUDIO_ACTION_TYPE")
-                }.thenReturn(AudioAction.PAUSE)
+                }.thenReturn(PlayBackAction.PAUSE)
             }
 
-            AudioAction.perform(player, intent)
+            PlayBackAction.perform(player, intent)
 
             it("should trigger `pause` on player") {
                 verify(player).pause()
             }
         }
 
-        on("a Stop AudioAction") {
+        on("a Stop PlayBackAction") {
 
             val intent = mock<Intent> {
                 on {
                     getSerializableExtra("EXTRA_AUDIO_ACTION_TYPE")
-                }.thenReturn(AudioAction.STOP)
+                }.thenReturn(PlayBackAction.STOP)
             }
 
-            AudioAction.perform(player, intent)
+            PlayBackAction.perform(player, intent)
 
             it("should trigger `stop` on player") {
                 verify(player).stop()
             }
         }
 
-        on("a Seek AudioAction") {
+        on("a Seek PlayBackAction") {
 
             val intent = mock<Intent> {
                 on {
                     getSerializableExtra("EXTRA_AUDIO_ACTION_TYPE")
-                }.thenReturn(AudioAction.SEEK)
+                }.thenReturn(PlayBackAction.SEEK)
 
                 on {
                     getIntExtra("EXTRA_AUDIO_SEEK_PERCENTAGE", 0)
                 }.thenReturn(80)
             }
 
-            AudioAction.perform(player, intent)
+            PlayBackAction.perform(player, intent)
 
             it("should trigger `seek` on player with a progress of 80") {
                 verify(player).seek(80)
             }
         }
 
-        on("a Tickle AudioAction") {
+        on("a Tickle PlayBackAction") {
 
             val intent = mock<Intent> {
                 on {
                     getSerializableExtra("EXTRA_AUDIO_ACTION_TYPE")
-                }.thenReturn(AudioAction.TICKLE)
+                }.thenReturn(PlayBackAction.TICKLE)
             }
 
-            AudioAction.perform(player, intent)
+            PlayBackAction.perform(player, intent)
 
             it("should trigger `tickle` on player") {
                 verify(player).tickle()
