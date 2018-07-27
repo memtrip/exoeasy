@@ -1,6 +1,11 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     compileSdkVersion 28
@@ -11,10 +16,19 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        config {
+            storeFile file(properties.getProperty("keystore.storeFile"))
+            storePassword properties.getProperty("keystore.storePassword")
+            keyAlias properties.getProperty("keystore.keyAlias")
+            keyPassword properties.getProperty("keystore.keyPassword")
+        }
+    }
     buildTypes {
         release {
+            signingConfig  signingConfigs.config
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {
@@ -40,4 +54,85 @@ dependencies {
     /* spek */
     testImplementation 'org.jetbrains.spek:spek-api:1.1.5'
     testImplementation 'org.jetbrains.spek:spek-junit-platform-engine:1.1.5'
+}
+
+ext {
+    libraryDescription = 'An abstraction layer over an instance of ExoPlayer running on a background service. Exoeasy provides a \n' +
+            'convenient mechanism for observing on playback updates and publishing playback commands. \n' +
+            'The service can be configured to provide `RemoteViews` for controlling playback from a Notification.'
+    siteUrl = 'https://github.com/memtrip/ExoEasy'
+    gitUrl = 'https://github.com/memtrip/ExoEasy.git'
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'exoeasy'
+        userOrg = 'memtrip'
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+        publicDownloadNumbers = true
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                groupId 'com.memtrip.exoeasy'
+                artifactId 'exoeasy'
+
+                name 'ExoEasy'
+                description libraryDescription
+                url 'http://www.memtrip.com'
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'samkirton'
+                        name 'Samuel Kirton'
+                        email 'sam@memtrip.com'
+                    }
+                }
+                scm {
+                    connection siteUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
 }
