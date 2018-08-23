@@ -4,10 +4,9 @@ import android.content.Context
 import android.view.View
 import android.widget.RemoteViews
 import com.memtrip.exoeasy.AudioResource
-
 import com.memtrip.exoeasy.R
-import com.memtrip.exoeasy.notification.PlayBackStateRemoteView
 import com.memtrip.exoeasy.notification.Destination
+import com.memtrip.exoeasy.notification.PlayBackStateRemoteView
 
 /**
  * Copyright 2013-present memtrip LTD.

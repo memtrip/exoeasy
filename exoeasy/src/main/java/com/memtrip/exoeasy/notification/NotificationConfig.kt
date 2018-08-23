@@ -27,11 +27,11 @@ data class NotificationConfig(
      * The channelId required by API versions 26+
      * @see android.app.NotificationManager.createNotificationChannel
      */
-    val channelId: String = "",
+    val channelId: String,
 
     /**
      * The icon displayed in the statusBar for the streaming service notification
      * @see androidx.core.app.NotificationCompat.Builder.setSmallIcon
      */
-    @DrawableRes val statusBarIcon: Int = -1
+    @DrawableRes val statusBarIcon: Int
 )

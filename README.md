@@ -7,7 +7,7 @@ The service can be configured to provide `RemoteViews` for controlling playback 
 ## Gradle dependency
 ```groovy
 dependencies {
-    implementation 'com.memtrip.exoeasy:exoeasy:1.0'
+    implementation 'com.memtrip.exoeasy:exoeasy:1.0.1'
 }
 ```
 
@@ -85,6 +85,11 @@ class AudioStreamingService : StreamingService<HttpAudioResource>() {
         return AudioPlayingActivity::class
     }
 }
+```
+
+Register the StreamingService in the AndroidManifest, e.g:
+```xml
+<service android:name="com.memtrip.exoeasy.sample.AudioStreamingService" />
 ```
 
 ## Send playback events to exoplayer with `AudioStreamController`

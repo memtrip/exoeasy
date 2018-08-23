@@ -1,7 +1,7 @@
 package com.memtrip.exoeasy.player
 
-import android.media.AudioManager
 import android.content.Context
+import android.media.AudioManager
 
 /**
  * Copyright 2013-present memtrip LTD.

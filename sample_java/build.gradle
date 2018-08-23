@@ -6,7 +6,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        applicationId "com.memtrip.exoeasy.sample"
+        applicationId "com.memtrip.exoeasy.sample_java"
         minSdkVersion 17
         targetSdkVersion 28
         versionCode 1
@@ -26,6 +26,12 @@ android {
 dependencies {
 
     implementation project(":exoeasy")
+
+    //implementation 'com.memtrip.exoeasy:exoeasy:1.0'
+
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.jakewharton:butterknife:9.0.0-SNAPSHOT'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-SNAPSHOT'
 
     /* */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

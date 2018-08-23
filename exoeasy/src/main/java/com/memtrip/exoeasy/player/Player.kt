@@ -89,6 +89,10 @@ internal class Player constructor(
         exoPlayer.seekTo(seekPosition)
     }
 
+    internal fun seek(positionInMs: Long) {
+        exoPlayer.seekTo(positionInMs)
+    }
+
     internal fun tickle() {
         eventListener.onPlayerStateChanged(exoPlayer.playWhenReady, exoPlayer.playbackState)
     }

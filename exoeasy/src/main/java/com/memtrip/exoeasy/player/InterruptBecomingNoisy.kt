@@ -3,8 +3,8 @@ package com.memtrip.exoeasy.player
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
 import android.content.IntentFilter
+import android.media.AudioManager
 
 /**
  * Copyright 2013-present memtrip LTD.

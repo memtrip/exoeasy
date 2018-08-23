@@ -6,10 +6,9 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.memtrip.exoeasy.AudioStreamController
-import com.memtrip.exoeasy.broadcast.PlayBackState
 import com.memtrip.exoeasy.NotificationInfo
+import com.memtrip.exoeasy.broadcast.PlayBackState
 import com.memtrip.exoeasy.broadcast.PlayBackStateUpdates
-
 import com.memtrip.exoeasy.secondsProgressFormat
 import kotlinx.android.synthetic.main.audio_playing_activity.*
 
@@ -33,7 +32,7 @@ class AudioPlayingActivity : AppCompatActivity() {
             audioResource,
             HttpAudioResourceIntent(),
             NotificationInfo("Jason Hogan", "This is it!", null),
-            AudioStreamingService::class,
+            AudioStreamingService::class.java,
             this)
 
         playBackStateUpdates = PlayBackStateUpdates(audioResource)
@@ -106,6 +105,7 @@ class AudioPlayingActivity : AppCompatActivity() {
         }
         is PlayBackState.Progress -> {
             audio_playing_activity_progress.visibility = View.GONE
+            audio_playing_activity_pause_button.visibility = View.VISIBLE
             audio_playing_activity_seekbar.progress = playBackState.percentage
             audio_playing_activity_duration_textview.text = playBackState.duration.secondsProgressFormat()
             audio_playing_activity_progress_textview.text = playBackState.currentPosition.secondsProgressFormat()

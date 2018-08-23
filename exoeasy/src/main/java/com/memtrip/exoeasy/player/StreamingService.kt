@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.DefaultLoadControl
@@ -24,10 +25,8 @@ import com.memtrip.exoeasy.NotificationInfo
 import com.memtrip.exoeasy.broadcast.BroadcastOnPlayerStateChanged
 import com.memtrip.exoeasy.notification.Destination
 import com.memtrip.exoeasy.notification.NotificationConfig
-
-import com.memtrip.exoeasy.notification.StreamingNotificationFactory
 import com.memtrip.exoeasy.notification.PlayBackStateRemoteView
-import kotlin.reflect.KClass
+import com.memtrip.exoeasy.notification.StreamingNotificationFactory
 
 /**
  * Copyright 2013-present memtrip LTD.
@@ -61,7 +60,7 @@ abstract class StreamingService<A : AudioResource> : Service() {
      * Configure the playback notification
      */
     protected open fun notificationConfig(): NotificationConfig {
-        return NotificationConfig(false)
+        return NotificationConfig(false, "", -1)
     }
 
     /**
@@ -81,7 +80,7 @@ abstract class StreamingService<A : AudioResource> : Service() {
     /**
      * The destination activity to navigate to when the playback notification is selected
      */
-    protected open fun activityDestination(): KClass<out Activity> {
+    protected open fun activityDestination(): Class<out Activity> {
         throw IllegalStateException("activityDestination() must be overridden in " +
             "com.memtrip.exoeasy.player.StreamingService " +
             "when you have showNotification set to true in NotificationConfig")
@@ -173,7 +172,7 @@ abstract class StreamingService<A : AudioResource> : Service() {
             audioResource,
             audioResourceIntent,
             info,
-            activityDestination(),
+            activityDestination().kotlin,
             this.javaClass.kotlin,
             this) }
     }
@@ -194,5 +193,5 @@ abstract class StreamingService<A : AudioResource> : Service() {
         super.onTaskRemoved(rootIntent)
     }
 
-    override fun onBind(intent: Intent) = null
+    override fun onBind(intent: Intent): IBinder? = null
 }

@@ -1,1 +1,1 @@
-include ':exoeasy', ':sample'
+include ':exoeasy', ':sample', ':sample_java'
